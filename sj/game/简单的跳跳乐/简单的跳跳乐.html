@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>简单的跳跳乐</title>
+    <style>
+        body {
+            width: 100vw;
+            height: 100vh;
+        }
+        
+        #drawing {
+            position: fixed;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #ccc;
+        }
+        
+        #stop {
+            display: none;
+        }
+        /* .a {
+            display: none;
+            position: fixed;
+            z-index: 8;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width: 400px;
+            height: 400px;
+            background-color: violet;
+        } */
+    </style>
+</head>
+
+<body>
+    <button id="stop">帮助</button>
+    <div class="a"></div>
+    <div class="content"> <canvas id="drawing" width="400" height="850"></canvas></div>
+    <script>
+        //let block = document.querySelector(".a");
+        // block.style.display = "block";
+        if (localStorage.getItem("max") === null) {
+            localStorage.setItem("max", JSON.stringify(0))
+        }
+        const content = document.querySelector(".content");
+        const stop = document.getElementById("stop"); //暂停按钮
+        const jumpTimes = 2; //连跳次数
+        let isAbleClick = jumpTimes;
+        const timeSpace = 22 //时间间隔 22
+        let timer = {
+            obstacleMove: null,
+            doudouMove: null
+        };
+        let douDouLocation = [50, -250, 50, 50]; //豆豆坐标
+        //障碍物坐标
+        let obstaclesLocation = [
+            [-100, 0, 300, -200],
+            [300, 0, 200, -100],
+            [628, 0, 100, -150],
+            [804, 0, 150, -190]
+        ]
+        let drawing = document.getElementById("drawing")
+        ctx = drawing.getContext("2d")
+
+        ctx.font = " 24px Arial"
+        ctx.textAlign = "center"
+        ctx.textBaseline = "middle"
+        ctx.translate(0, 400);
+        ctx.rotate(Math.PI / 2)
+        ctx.fillText("最大分数：" + JSON.parse(localStorage.getItem("max")), 250, -350)
+            //豆豆
+        ctx.fillRect(...douDouLocation)
+
+        //障碍物
+        ctx.fillStyle = "red"
+        for (let i = 0; i < obstaclesLocation.length; i++) {
+            ctx.fillRect(...obstaclesLocation[i]);
+        }
+        nowobstacle = 0;
+
+        //障碍物移动
+        let upOrDomw = 1;
+        let isMoveAble = true
+
+
+        //障碍物左移
+        function move() {
+            ctx.fillStyle = "red";
+            if (isMoveAble) {
+                for (let i = 0; i < obstaclesLocation.length; i++) {
+                    ctx.clearRect(...obstaclesLocation[i]);
+                    if ((obstaclesLocation[i][0] <= douDouLocation[0] + douDouLocation[2]) && obstaclesLocation[i][0] + obstaclesLocation[i][2] >= douDouLocation[0]) {
+                        nowobstacle = i;
+                        ctx.clearRect(-200, -370, 120, 60)
+                        ctx.fillText("目前得分：" + i, -150, -350);
+                        upOrDomw = -upOrDomw;
+                        let locationSpace = Math.floor(Math.random() * 5) * 8 + 160; //需要能整除8
+                        let nowObstacleHeight = obstaclesLocation[obstaclesLocation.length - 1][3] + Math.floor(Math.random() * 30 + 40) * upOrDomw;
+                        let nowobstacleWidth = Math.floor(Math.random() * 25) * 8 + 100; //需要能整除8
+                        let nextObstacle = [obstaclesLocation[obstaclesLocation.length - 1][0] + locationSpace + obstaclesLocation[obstaclesLocation.length - 1][2], 0, nowobstacleWidth, nowObstacleHeight];
+                        obstaclesLocation.push(nextObstacle);
+                    }
+                    if (obstaclesLocation[nowobstacle + 1][0] > douDouLocation[0] + douDouLocation[2] + 8) {
+                        obstaclesLocation[i][0] -= 8;
+                    } else {
+                        if (((obstaclesLocation[nowobstacle][0] + obstaclesLocation[nowobstacle][2] < douDouLocation[0]) && (obstaclesLocation[nowobstacle + 1][0] > 100)) && (douDouLocation[1] + douDouLocation[3] > obstaclesLocation[nowobstacle + 1][3])) {
+                            isMoveAble = false;
+                        } else {
+                            obstaclesLocation[i][0] -= 8;
+                        }
+                    }
+                    ctx.fillRect(...obstaclesLocation[i]);
+                }
+            }
+
+
+        }
+
+        //豆豆下落
+        function movaDown() {
+            ctx.clearRect(...douDouLocation);
+            if (obstaclesLocation[nowobstacle][0] + obstaclesLocation[nowobstacle][2] < douDouLocation[3]) {
+                douDouLocation[1] += 2;
+            } else {
+                if (douDouLocation[1] + douDouLocation[3] > obstaclesLocation[nowobstacle][3]) {
+                    isAbleClick = jumpTimes;
+                } else {
+                    douDouLocation[1] += 2;
+                }
+            }
+
+            if (douDouLocation[1] > 0) {
+                if (JSON.parse(localStorage.getItem("max")) < nowobstacle) {
+                    localStorage.setItem("max", JSON.stringify(nowobstacle));
+                }
+
+                clearInterval(timer.doudouMove);
+                clearInterval(timer.obstacleMove);
+                location.reload()
+            }
+            ctx.fillStyle = "black"
+            ctx.fillRect(...douDouLocation);
+        }
+
+        //豆豆点击跳跃
+        function jump() {
+            ctx.clearRect(...douDouLocation);
+            douDouLocation[1] -= 3;
+            ctx.fillStyle = "black"
+            ctx.fillRect(...douDouLocation);
+            if (a - 100 > douDouLocation[1]) {
+                clearInterval(timer.doudouMove);
+                timer.doudouMove = setInterval(movaDown, 3)
+            }
+        }
+
+        let a = douDouLocation[1];
+
+        //开始游戏
+        function startGame() {
+            content.addEventListener("click", function() {
+                if (isAbleClick > 0) {
+                    isAbleClick--;
+                    clearInterval(timer.doudouMove);
+                    a = douDouLocation[1]
+                    timer.doudouMove = setInterval(jump, 10)
+                }
+            })
+            timer.obstacleMove = setInterval(move, timeSpace);
+            //豆豆下落
+            timer.doudouMove = setInterval(movaDown, 2)
+        }
+        startGame()
+        let stopf = true
+        stop.addEventListener("click", function() {
+            if (stopf) {
+                stopf = false;
+                clearInterval(timer.doudouMove);
+                clearInterval(timer.obstacleMove);
+                content.removeEventListener("click");
+            } {
+                startGame();
+                stopf = true;
+            }
+        })
+    </script>
+</body>
+
+</html>

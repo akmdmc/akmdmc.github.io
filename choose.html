@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        body {
+            width: 100vw;
+            height: 100vh;
+            padding: 0;
+            margin: 0;
+            box-sizing: border-box;
+            background: url(./img/1.jpg) no-repeat center center;
+        }
+        
+        li {
+            list-style: none;
+        }
+        
+        a {
+            text-decoration: none;
+            color: black;
+        }
+        
+        h1 {
+            margin: 0;
+            padding: 20px 0 20px 40px;
+            text-align: center;
+            background-color: #78909c;
+            font-size: 28px;
+            color: #cfd8dc;
+        }
+        
+        ul {
+            display: flex;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .choice>li {
+            flex: 1;
+            position: relative;
+            text-align: center;
+            line-height: 60px;
+            height: 60px;
+            font-weight: 600;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 20px;
+            background-color: #90a4ae;
+        }
+        /* .choice>li:hover {
+            background-color: #455a64;
+        } */
+        
+        .choice>li:hover .choice-inner li {
+            opacity: 1;
+        }
+        
+        .choice-inner {
+            padding: 0;
+            margin: 0;
+            position: absolute;
+            top: 60px;
+            left: 0;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+        
+        .choice-inner li {
+            opacity: 0;
+            transition: all 1s;
+            text-align: center;
+            line-height: 60px;
+            width: 100%;
+            height: 60px;
+            background-color: rgba(84, 110, 122, .7);
+        }
+        
+        .choice-inner li:hover {
+            background-color: #90a4ae;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>请选择你想要的浏览的内容</h1>
+    </h1>
+    <ul class="choice">
+        <li class="box">游戏
+            <ol class="choice-inner">
+                <li>
+                    <a href="./电脑/贪吃蛇/game.html">贪吃蛇</a>
+                </li>
+                <li><a href="./电脑/召唤神龙/zhsl.html">召唤神龙</a></li>
+                <li>
+                    <a href="./电脑/简单的跳跳乐/简单的跳跳乐.html">简单的跳跳乐</a>
+                </li>
+                <li>
+                    <a href="./电脑/傻瓜射击游戏/index.html">鸡你太美</a>
+                </li>
+                <li></li>
+            </ol>
+        </li>
+        <li class="box">学习
+            <ol class="choice-inner">
+                <li>
+                    <a href="./电脑/学习/1.自我介绍.html">名片</a>
+                </li>
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+            </ol>
+        </li>
+    </ul>
+    <script>
+        let boxs = document.querySelectorAll('.box')
+        for (let i = 0; i < boxs.length; i++) {
+            boxs[i].addEventListener('click', function() {
+                for (let k = 0; k < boxs.length; k++) {
+                    for (let t = 0; t < boxs[k].children[0].children.length; t++) {
+                        boxs[k].children[0].children[t].style.opacity = 0
+                    }
+                }
+                for (let j = 0; j < boxs[i].children[0].children.length; j++) {
+                    boxs[i].children[0].children[j].style.opacity = 1
+                }
+            })
+        }
+    </script>
+</body>
+
+</html>

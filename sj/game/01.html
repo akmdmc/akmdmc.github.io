@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        body {
+            padding: 0;
+            margin: 0;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            background-color: #eeeeee;
+        }
+        
+        .box {
+            width: 100vw;
+            height: 40vh;
+            background-color: #616161;
+            margin-top: 100px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .box-row {
+            width: 100%;
+            flex: 1;
+            display: flex;
+        }
+        
+        .box-line {
+            flex: 1;
+            outline: none;
+            border: 1px solid #e0e0e0;
+            /* background: url(./gameImg/d4628535e5dde711b23510aea6efce1b9c166186.jpg) no-repeat center;
+            background-size: 100% 100%; */
+        }
+        
+        h1 {
+            text-align: center;
+            margin-top: 100px;
+        }
+        
+        #reload-btn {
+            display: block;
+            outline: none;
+            margin: 30px auto;
+            padding: 0;
+            align-items: center;
+            border-radius: 30px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 16px;
+            font-weight: 600;
+            width: 100px;
+            height: 40px;
+            line-height: 40px;
+        }
+        
+        .floor1,
+        .floor2 {
+            position: fixed;
+            top: 50%;
+            left: 25%;
+            transform: translateY(-50%);
+            width: 200px;
+            height: 75px;
+            text-align: center;
+            line-height: 75px;
+            background-color: #303f9f;
+            font-size: 24px;
+            font-weight: 600;
+            font-family: 'Courier New', Courier, monospace;
+            color: #e8eaf6;
+        }
+        
+        .floor2 {
+            top: 41.5%;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>井字棋</h1>
+    <div class="box">
+        <section class="box-row">
+            <button class="box-line"></button>
+            <button class="box-line"></button>
+            <button class="box-line"></button>
+
+        </section>
+        <section class="box-row">
+            <button class="box-line"></button>
+            <button class="box-line"></button>
+            <button class="box-line"></button>
+        </section>
+        <section class="box-row">
+            <button class="box-line"></button>
+            <button class="box-line"></button>
+            <button class="box-line"></button>
+        </section>
+    </div>
+    <div class="floor1">单人模式</div>
+    <div class="floor2">双人模式</div>
+    <button id="reload-btn">重新开始</button>
+</body>
+<script>
+    let floor1 = document.querySelector(".floor1")
+    let floor2 = document.querySelector(".floor2")
+    let divs = document.querySelectorAll(".box-line");
+    let reload_btn = document.querySelector('#reload-btn');
+    reload_btn.addEventListener("click", function() {
+        document.location.reload();
+    })
+    flag = 0;
+    for (let i = 0; i < divs.length; i++) {
+
+        divs[i].setAttribute("i", 0);
+        divs[i].setAttribute("isClick", i);
+    }
+
+
+    // divs[i].setAttribute("i", 0);
+    // divs[i].setAttribute("isClick", i);
+    //单人模式
+    floor1.addEventListener('click', function() {
+            floor1.style.display = "none"
+            floor2.style.display = "none"
+            singlePeople()
+        })
+        //双人模式
+    floor2.addEventListener('click', function() {
+        floor1.style.display = "none"
+        floor2.style.display = "none"
+        towPeopleWay()
+    })
+
+    //单人模式  函数
+    function singlePeople() {
+        for (let i = 0; i < divs.length; i++) {
+            divs[i].addEventListener("click", function() {
+                this.disabled = true;
+                this.setAttribute("i", 1)
+                this.style.background = 'url(./gameImg/d4628535e5dde711b23510aea6efce1b9c166186.jpg) no-repeat center'
+                this.setAttribute("isClick", -1);
+                this.style.backgroundSize = "100% 100%"
+                if (checkGame()) {
+                    divs[i].removeEventListener("click")
+                }
+                t = Math.floor(Math.random() * 9)
+                while (divs[t].disabled == true) {
+                    t = Math.floor(Math.random() * 9)
+                    console.log(divs[Math.floor(Math.random() * 9)].disabled);
+                }
+                divs[t].disabled = true;
+                divs[t].setAttribute("i", 1)
+                divs[t].style.background = 'url(./gameImg/4aca2da763f23ac1f0e3f61eb67469f8.jpeg) no-repeat center'
+                divs[t].setAttribute("isClick", -2);
+                divs[t].style.backgroundSize = "100% 100%"
+                checkGame()
+            })
+        }
+    }
+
+    //双人模式 函数
+    function towPeopleWay() {
+        for (let i = 0; i < divs.length; i++) {
+            divs[i].addEventListener("click", function() {
+                this.disabled = true;
+                this.setAttribute("i", 1)
+                if (flag) {
+                    this.style.background = 'url(./gameImg/d4628535e5dde711b23510aea6efce1b9c166186.jpg) no-repeat center'
+                    flag = 0;
+
+                    this.setAttribute("isClick", -1);
+
+                } else {
+                    this.style.background = 'url(./gameImg/4aca2da763f23ac1f0e3f61eb67469f8.jpeg) no-repeat center'
+                    flag = 1;
+                    this.setAttribute("isClick", -2);
+                }
+                this.style.backgroundSize = "100% 100%"
+                checkGame()
+            })
+        }
+    }
+
+
+
+
+    //自动点击
+    function autoClick() {
+
+        t = Math.floor(Math.random() * 9)
+        while (divs[t].disabled == true) {
+            t = Math.floor(Math.random() * 9)
+            console.log(divs[Math.floor(Math.random() * 9)].disabled);
+        }
+        divs[t].disabled = true;
+        divs[t].setAttribute("i", 1)
+        divs[t].style.background = 'url(./gameImg/4aca2da763f23ac1f0e3f61eb67469f8.jpeg) no-repeat center'
+        divs[t].setAttribute("isClick", -2);
+        divs[t].style.backgroundSize = "100% 100%"
+        if (checkGame()) return 0
+    }
+    //检查是否游戏结束
+    function checkGame() {
+        let a = new Array
+        for (let i = 0; i < 9; i++) {
+            a[i] = divs[i].getAttribute("isClick")
+        }
+        if ((a[0] == a[1] && a[1] == a[2]) || (a[3] == a[4] && a[4] == a[5]) || (a[6] == a[7] && a[7] == a[8]) || (a[0] == a[3] && a[3] == a[6]) || (a[1] == a[4] && a[4] == a[7]) || (a[2] == a[5] && a[5] == a[8]) || (a[0] == a[4] && a[4] == a[8]) || (a[2] == a[4] && a[4] == a[6])) {
+            alert("游戏结束");
+            allDisabled()
+            return true
+                //document.location.reload()
+        } else {
+            flag1 = 1
+            for (let i = 0; i < 9; i++) {
+                if (divs[i].getAttribute("i") == 0) {
+                    flag1 = 0
+                    break;
+                }
+            }
+            if (flag1) {
+                alert("游戏结束");
+                allDisabled()
+                return true
+                    //  document.location.reload()
+            }
+        }
+        return false
+    }
+
+    //禁止所有按钮
+    function allDisabled() {
+        for (let i = 0; i < 9; i++) {
+            divs[i].disabled = true
+        }
+    }
+</script>
+
+
+</html>

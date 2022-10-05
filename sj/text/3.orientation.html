@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            width: 100vw;
+            height: 100vh;
+        }
+        
+        #arrow-top {
+            position: relative;
+            width: 20px;
+            height: 40px;
+            background-color: black;
+        }
+        
+        #arrow-bottom {
+            position: absolute;
+            top: -40px;
+            left: -10px;
+            content: "";
+            display: block;
+            width: 0;
+            height: 0;
+            border: 20px solid transparent;
+            border-bottom-color: black;
+        }
+        
+        .da {
+            margin-top: 100px;
+        }
+        
+        #arrow {
+            transform: rotate(30deg);
+        }
+    </style>
+</head>
+
+<body>
+    <div id="arrow">
+        <div id="arrow-top">
+            <div id="arrow-bottom"></div>
+        </div>
+
+    </div>
+
+    <div class="da">不支持哦！</div>
+    <script>
+        let arrow = document.querySelector("#arrow");
+        arrow.style.webkitTransform = "rotate(60deg)"
+        window.addEventListener("deviceorientation", (event) => {
+            if (event.alpha != null)
+                arrow.style.webkitTransform = `rotate(${Math.round(event.alpha)}deg)`;
+            document.querySelector(".da").innerHTML = "角度为：" + event.alpha;
+        })
+    </script>
+</body>
+
+</html>

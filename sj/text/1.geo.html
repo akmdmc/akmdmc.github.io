@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>地理位置测试</title>
+    <style>
+        body {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #88eec5;
+            font-size: 24px;
+            font-weight: 600;
+            color: #7a153d;
+        }
+    </style>
+</head>
+
+<body>
+    <p>还要一点点时间哦</p>
+    <script>
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(locationSuccess, locationError, {
+                enableHighAccuracy: true,
+                timeout: 5000,
+                maximumAge: 3000
+            })
+
+            function locationSuccess(position) {
+                let lat = position.coords.latitude;
+                let lon = position.coords.longitude;
+                document.querySelector("p").innerHTML = `您的纬度是：${lat}，<br><br>您的经度是：${lon}`;
+            }
+
+            function locationError(e) {
+                document.querySelector("p").innerHTML = "看来是获取不了哦！";
+                switch (e.code) {
+                    case e.TIMEOUT:
+                        alert("定位失败，请求用户位置超时");
+                        break;
+                    case e.PERMISSION_DENIED:
+                        alert("您拒绝了位置服务，无法获取数据！");
+                        break;
+                    case e.UNKNOWN_ERROR:
+                        alert("发生一个位置错误");
+                        break;
+                }
+            }
+        } else {
+            document.querySelector("p").innerHTML = "看来是获取不了哦！";
+        }
+    </script>
+</body>
+
+</html>

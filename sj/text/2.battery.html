@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>电池测试</title>
+    <style>
+        body {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #6a26f1;
+            font-size: 24px;
+            font-weight: 600;
+            color: #11c8a5;
+        }
+    </style>
+</head>
+
+<body>
+    <h2 class="battery">这里是电池测试</h2>
+    <script>
+        let battery = document.querySelector(".battery");
+        let battery1 = navigator.battery || navigator.webkitBattery || navigator.mozBattery;
+        console.log(battery1);
+        if (typeof navigator.getBattery === "function") {
+            navigator.getBattery()
+                .then((b) => {
+                    console.log(b);
+                    battery.innerHTML = `目前的电池电量是：${b.level*100}%`;
+                })
+        } else if (battery1) {
+            battery.innerHTML = `目前的电池电量是：${battery1.level*100}%`;
+        } else {
+            battery.innerHTML = `您的浏览器不支持该选项哦！<br>消息：${battery1}`;
+        }
+    </script>
+</body>
+
+</html>

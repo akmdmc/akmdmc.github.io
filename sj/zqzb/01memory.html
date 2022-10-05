@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>记念</title>
+    </title>
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: url(./img/-8f8450ab598df3f.jpg) no-repeat -1500px -1000px;
+            object-fit: cover;
+            overflow: hidden;
+        }
+        
+        .box {
+            width: 100%;
+            margin-top: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        
+        @keyframes a1 {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+        
+        .sheep {
+            position: fixed;
+            left: 0;
+            top: 0%;
+            background-color: #fff;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transform: rotateY(180deg) rotate(-90deg);
+            animation: sheepMove 15s linear infinite;
+        }
+        
+        @keyframes sheepMove {
+            0% {}
+            35% {
+                top: 92%;
+                left: 0;
+                transform: rotateY(180deg) rotate(-90deg);
+            }
+            36% {
+                top: 92%;
+                left: 0;
+                transform: rotateY(180deg) rotate(0deg);
+            }
+            50% {
+                top: 92%;
+                left: 86%;
+                transform: rotateY(180deg) rotate(0deg);
+            }
+            51% {
+                top: 92%;
+                left: 86%;
+                transform: rotateY(180deg) rotate(90deg);
+            }
+            85% {
+                top: 0%;
+                left: 86%;
+                transform: rotateY(180deg) rotate(90deg);
+            }
+            86% {
+                top: 0%;
+                left: 86%;
+                transform: rotateY(180deg) rotate(180deg);
+            }
+            99% {
+                top: 0%;
+                left: 0;
+                transform: rotateY(180deg) rotate(180deg);
+            }
+            100% {
+                top: 0%;
+                left: 0;
+                transform: rotateY(180deg) rotate(270deg);
+            }
+        }
+        /* .btn-audio {
+            background-color: rgb(241, 243, 244);
+            width: 200px;
+            height: 40px;
+            border-radius: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .stop {
+            width: 0;
+            height: 0;
+            border-left: 20px solid #515151;
+            border-bottom: 12px solid transparent;
+            border-top: 12px solid transparent;
+        } */
+    </style>
+</head>
+
+<body>
+    <div class="box">
+
+        <div class="btn-audio">
+            <div class="stop"></div>
+            <audio id="jinian" src="./RAiNBOW计划、雷雨心 - 记念.mp3" autoplay='autoplay'></audio></div>
+    </div>
+
+    <div class="sheep">
+        <img src="./img/105144537..jpg" alt="">
+    </div>
+    <script type="text/javascript">
+        window.onload = function() {
+                let mp3 = new Audio
+                mp3 = document.querySelector('audio')
+                mp3.play()
+
+            }
+            //播放器控制
+            // var audio = document.getElementById('mp3Btn');
+            // audio.volume = .3;
+            // $('.btn-audio').click(function() {
+            //     event.stopPropagation(); //防止冒泡
+            //     if (audio.paused) { //如果当前是暂停状态
+            //         $('.btn-audio').css({
+            //             'background': 'url(images/voice_play.png) no-repeat center bottom',
+            //             'background-size': 'cover'
+            //         });
+            //         audio.play(); //播放
+            //         return;
+            //     } else { //当前是播放状态
+            //         $('.btn-audio').css({
+            //             'background': 'url(images/voice_stop.png) no-repeat center bottom',
+            //             'background-size': 'cover'
+            //         });
+            //         audio.pause(); //暂停
+            //     }
+            // });
+    </script>
+</body>
+
+</html>

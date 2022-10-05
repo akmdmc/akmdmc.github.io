@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Document</title>
+    <style>
+        body {
+            overflow: hidden;
+        }
+        /* 
+         */
+        
+        .ghost {
+            display: inline-block;
+            position: absolute;
+            left: 200px;
+            width: 140px;
+            height: 160px;
+            background-color: #f2f2f2;
+            border-radius: 50% 50% 0 0;
+            animation: a2 2s infinite ease-in-out;
+        }
+        
+        @keyframes a2 {
+            50% {
+                transform: translateY(-30px);
+            }
+        }
+        
+        .face {
+            width: 100%;
+            position: absolute;
+            top: 60px;
+            /* left: calc(50%-50px); */
+        }
+        
+        .eyes {
+            height: 24px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            margin-bottom: 14px;
+        }
+        
+        .eyes span {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background-color: #2c3a47;
+            transition: .3s linear;
+        }
+        
+        .ghost:hover .eyes span {
+            height: 16px;
+        }
+        
+        .mouth {
+            width: 40px;
+            height: 20px;
+            background-color: #2c3a47;
+            margin: auto;
+            border-radius: 0 0 20px 20px;
+            transition: .3s linear;
+        }
+        
+        .ghost:hover .mouth {
+            height: 12px;
+        }
+        
+        .hands {
+            width: 180px;
+            position: absolute;
+            left: -20px;
+            top: 80px;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .hands span {
+            width: 20px;
+            height: 30px;
+            background-color: #f2f2f2;
+        }
+        
+        .hands span:first-child {
+            border-radius: 20px 0 0 20px;
+        }
+        
+        .hands span:last-child {
+            border-radius: 0 20px 20px 0;
+        }
+        
+        .feet {
+            width: 100%;
+            position: absolute;
+            bottom: -20px;
+            display: flex;
+        }
+        
+        .feet span {
+            flex: 1;
+            background-color: #f2f2f2;
+            height: 20px;
+            border-radius: 0 0 20px 20px;
+        }
+        
+        .feet span:first-child {
+            border-radius: 0 0 20px 12px;
+        }
+        
+        .feet span:last-child {
+            border-radius: 0 0 12px 20px;
+        }
+        /*  */
+        
+        .container {
+            position: relative;
+            padding: 0;
+            margin: 0;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            box-sizing: border-box;
+            background-color: #2c3a47;
+            ;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        #top {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 2;
+        }
+        /* .container::before {
+            position: absolute;
+            content: '';
+            display: block;
+            overflow: hidden;
+            width: 300%;
+            height: 100%;
+            background-image: linear-gradient(to bottom right, rgb(25, 0, 255), rgb(180, 12, 255), rgb(255, 5, 234));
+            filter: blur(20px);
+            animation: bg-anim 2s alternate infinite linear;
+        }
+        
+        @keyframes bg-anim {
+            from {
+                left: 0;
+            }
+            to {
+                left: -200%;
+            }
+        }
+         */
+        
+        p span {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            background-color: rgba(255, 255, 255, 0.2);
+            margin-left: 10px;
+            text-align: center;
+            line-height: 40px;
+        }
+        
+        .map {
+            position: relative;
+            margin-top: 10px;
+            width: 400px;
+            height: 400px;
+            background-color: rgba(0, 0, 0, 0.2);
+        }
+        
+        .food {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: url(./img/food.gif) no-repeat center;
+            background-size: 100% 100%;
+        }
+        
+        .footer {
+            background: url(./img/dragonBotton.jpeg) no-repeat center;
+            background-size: 100% 100%;
+        }
+        
+        .top {
+            background: url(./img/dragonTop.jpeg) no-repeat center;
+            background-size: 100% 100%;
+            /* transform: rotate(90deg); */
+        }
+        
+        .left {
+            transform: rotate(0deg);
+        }
+        
+        .up {
+            transform: rotate(90deg);
+        }
+        
+        .right {
+            transform: rotate(180deg);
+        }
+        
+        .down {
+            transform: rotate(270deg);
+        }
+        
+        @keyframes a1 {
+            0%,
+            10%,
+            20%,
+            50.1%,
+            60%,
+            65.1%,
+            80%,
+            90.1%,
+            92% {
+                background-color: #0e3742;
+                box-shadow: none;
+            }
+            18.1%,
+            20.1%,
+            30%,
+            50%,
+            60.1%,
+            65%,
+            80.1%,
+            90%,
+            92.1%,
+            100% {
+                background-color: #fff;
+                box-shadow: 0 0 10px #03bcf4, 0 0 20px #03bcf4, 0 0 40px #03bcf4, 0 0 80px #03bcf4, 0 0 160px #03bcf4;
+            }
+        }
+        
+        .bt {
+            position: fixed;
+            top: center;
+            right: center;
+            text-align: center;
+            line-height: 400px;
+            z-index: 99;
+            width: 400px;
+            height: 400px;
+            background-color: rgba(255, 255, 255, 0.5);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
+            border-radius: 20px;
+        }
+        
+        .btns {
+            position: relative;
+            border: none;
+            margin-left: 5px;
+            width: 100px;
+            height: 40px;
+            border-radius: 7px;
+            background-color: #6699FF;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+        }
+        
+        .btns::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.25));
+            transform: skewX(45deg);
+        }
+        
+        .btns:hover {
+            transform: scale(1.1);
+        }
+        
+        .snake {
+            position: absolute;
+            border-radius: 50%;
+            top: 200px;
+            left: 200px;
+            width: 20px;
+            height: 20px;
+            background-color: #0e3742;
+            /* animation: name duration timing-function delay iteration-count direction fill-mode;
+             */
+            animation: a1 5s linear infinite;
+            transition: all 0.3s;
+        }
+        
+        .tip {
+            position: fixed;
+            bottom: 0;
+            font-weight: 100;
+            font-size: small;
+            color: rgba(0, 0, 0, 0.4);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="bt">
+            <button class="btns">简单</button>
+            <button class="btns">一般</button>
+            <button class="btns">困难</button>
+        </div>
+        <div class="map">
+            <!-- <div class="snake"></div> -->
+            <div class="food"></div>
+        </div>
+        <section id="top">
+            <h1 class="score"> 目前得分:0</h1>
+            <p><span id="up">上</span></p>
+            <p><span id="left">左</span><span id="down">下</span><span id="right">右</span>
+                <div class="ghost">
+                    <div class="face">
+                        <div class="eyes">
+                            <span></span><span></span>
+                        </div>
+                        <div class="mouth"></div>
+                    </div>
+
+                    <div class="hands">
+                        <span></span><span></span>
+                    </div>
+                    <div class="feet">
+                        <span></span><span></span><span></span><span></span>
+                    </div>
+                </div>
+            </p>
+            <p class="tip">温馨提示:当你得分再一百时点击幽灵有机会触发隐藏彩蛋噢</p>
+
+        </section>
+
+        <script>
+            let state = 0
+            let bgcbt = document.querySelector('.bt')
+            let btns = document.querySelectorAll('.btns')
+            let map = document.querySelector(".map")
+            let food = document.querySelector('.food')
+            let score = document.querySelector('.score')
+            let up = document.querySelector("#up");
+            let left = document.querySelector("#left");
+            let down = document.querySelector("#down");
+            let right = document.querySelector("#right");
+            //let snakediv = document.querySelector(".snake");
+            let timer = null //定时器
+            let timerspan1 = null;
+            let timeSpan = 0
+            let ghost = document.querySelector(".ghost")
+            ghost.addEventListener("click", function() {
+
+                if (snakesBodyNumber == 100 && state == 2) {
+                    alert('恭喜你触发彩蛋！');
+                }
+            })
+
+            let nowDirection = "left"
+            let lastDirection = "right"
+            let nowcode = 37;
+
+            let snakes = []
+            let foodLocation = {}
+            let snakesLocation = []
+            let snakesBodyNumber = 0
+                // score.innerHTML = "5"
+
+            //难度控制按钮
+            for (let i = 0; i < btns.length; i++) {
+                btns[i].addEventListener('click', function() {
+                    let k = i
+                    setTimeout(() => {
+                        btns[i].style.backgroundColor = '#6699FF'
+                    }, 150)
+                    btns[i].style.backgroundColor = '#ccc'
+                    bgcbt.style.display = 'none'
+                    let snake = document.querySelector('.snake')
+                    if (k == 0) {
+                        timeSpan = 300 //0.4s
+                        snake.style.transitionDuration = '0.4s'
+                            //游戏开始自动向右走
+                        timer = setInterval(() => {
+                            for (let i = 0; i < snakes.length; i++) {
+                                move(37)
+                                ifEatFood(37)
+                            }
+                        }, timeSpan);
+                    } else if (k == 1) {
+                        timeSpan = 200 //0.3
+                        snake.style.transitionDuration = '0.3s'
+                            //游戏开始自动向右走
+                        timer = setInterval(() => {
+                            for (let i = 0; i < snakes.length; i++) {
+                                move(37)
+                                ifEatFood(37)
+                            }
+                        }, timeSpan);
+
+                    } else if (k == 2) {
+                        state = 2
+                        timeSpan = 100 //0.2
+                        snake.style.transitionDuration = '0.2s'
+                            //游戏开始自动向右走
+                        timer = setInterval(() => {
+                            for (let i = 0; i < snakes.length; i++) {
+                                move(37)
+                                ifEatFood(37)
+                            }
+                        }, timeSpan);
+                    }
+                })
+
+            }
+            //创建蛇身
+            function createSnake() {
+                let div = document.createElement("div")
+                div.className = "snake top"
+                div.style.backgroundColor = "blue"
+                map.appendChild(div)
+                snakes.push({})
+                snakes[snakesBodyNumber] = div
+                snakesBodyNumber++
+            }
+            createSnake()
+            snakesBodyNumber--
+            snakesLocation.push({})
+            snakesLocation[snakesBodyNumber].x = 200
+            snakesLocation[snakesBodyNumber].y = 200
+                // snakes.push({})
+                // snakes[snakesBody] = createSnake()
+
+            //初始化食物位置
+            function initFoodLocation() {
+                foodLocation.x = Math.floor((Math.random()) * 20) * 20
+                foodLocation.y = Math.floor((Math.random()) * 20) * 20
+                food.style.top = foodLocation.y + "px"
+                food.style.left = foodLocation.x + "px"
+            }
+            initFoodLocation()
+
+            //move
+
+            function move(code) {
+                for (let i = snakes.length - 1; i > 0; i--) {
+                    snakesLocation[i].x = snakesLocation[i - 1].x
+                    snakesLocation[i].y = snakesLocation[i - 1].y
+                }
+                // console.log(code);
+                if (code == 37) {
+                    nowDirection = 'left'
+                    snakesLocation[0].x = snakesLocation[0].x - 20
+                    snakes[0].className = "snake top left"
+                    if (snakesLocation[0].x <= -20) {
+                        clearInterval(timer)
+                        alert(`恭喜你得了${snakesBodyNumber}分!`)
+                        location.reload()
+                    }
+                } else if (code == 38) {
+                    nowDirection = 'up'
+                    snakes[0].className = "snake top up"
+                    snakesLocation[0].y = snakesLocation[0].y - 20
+                    if (snakesLocation[0].y <= -20) {
+                        clearInterval(timer)
+                        alert(`恭喜你得了${snakesBodyNumber}分!`)
+                        location.reload()
+                    }
+                } else if (code == 39) {
+                    nowDirection = 'right'
+                    snakes[0].className = "snake top right"
+                    snakesLocation[0].x = snakesLocation[0].x + 20
+                    if (snakesLocation[0].x >= 400) {
+                        clearInterval(timer)
+                        alert(`恭喜你得了${snakesBodyNumber}分!`)
+                        location.reload()
+                    }
+                } else if (code == 40) {
+                    nowDirection = 'down'
+                    snakes[0].className = "snake top down"
+                    snakesLocation[0].y = snakesLocation[0].y + 20
+                    if (snakesLocation[0].y >= 400) {
+                        clearInterval(timer)
+                        alert(`恭喜你得了${snakesBodyNumber}分!`)
+                        location.reload()
+                    }
+                }
+                //
+                for (let i = 0; i < snakes.length; i++) {
+                    snakes[i].style.left = snakesLocation[i].x + 'px'
+                    snakes[i].style.top = snakesLocation[i].y + 'px'
+                }
+            }
+
+            //吃到食物之后身体变长
+            function buildBody(code) {
+                // console.log(code);
+                snakesLocation.push({})
+                let div = document.createElement('div')
+                div.className = "snake"
+                if (code == 37) {
+                    div.style.left = snakesLocation[snakesBodyNumber].x + 20 + "px"
+                    div.style.top = snakesLocation[snakesBodyNumber].y + "px"
+                    snakesLocation[snakesBodyNumber + 1].x = snakesLocation[snakesBodyNumber].x + 20
+                    snakesLocation[snakesBodyNumber + 1].y = snakesLocation[snakesBodyNumber].y
+                } else if (code == 38) {
+                    div.style.left = snakesLocation[snakesBodyNumber].x + "px"
+                    div.style.top = snakesLocation[snakesBodyNumber].y + 20 + "px"
+                    snakesLocation[snakesBodyNumber + 1].x = snakesLocation[snakesBodyNumber].x
+                    snakesLocation[snakesBodyNumber + 1].y = snakesLocation[snakesBodyNumber].y + 20
+                } else if (code == 39) {
+                    div.style.left = snakesLocation[snakesBodyNumber].x - 20 + "px"
+                    div.style.top = snakesLocation[snakesBodyNumber].y + "px"
+                    snakesLocation[snakesBodyNumber + 1].x = snakesLocation[snakesBodyNumber].x - 20
+                    snakesLocation[snakesBodyNumber + 1].y = snakesLocation[snakesBodyNumber].y
+                } else if (code == 40) {
+                    div.style.left = snakesLocation[snakesBodyNumber].x + "px"
+                    div.style.top = snakesLocation[snakesBodyNumber].y - 20 + "px"
+                    snakesLocation[snakesBodyNumber + 1].x = snakesLocation[snakesBodyNumber].x
+                    snakesLocation[snakesBodyNumber + 1].y = snakesLocation[snakesBodyNumber].y - 20
+                }
+                snakesBodyNumber++
+                snakes.push({})
+                snakes[snakesBodyNumber] = div
+                map.appendChild(div)
+                for (let i = 1; i < snakes.length; i++) {
+                    snakes[i].className = "snake"
+                }
+                snakes[snakes.length - 1].className = "snake    footer"
+            }
+
+            //检查是否吃到食物
+            function ifEatFood(code) {
+                if (foodLocation.x == snakesLocation[0].x && foodLocation.y == snakesLocation[0].y) {
+                    initFoodLocation()
+                    console.log(1);
+                    score.innerHTML = "目前得分:" + (parseInt(snakesBodyNumber) + 1)
+                    buildBody(code)
+                }
+            }
+            //检查按键正确
+            function check(code) {
+                if ((code == 37 && nowDirection != "right") || (code == 38 && nowDirection != "down") || (code == 39 && nowDirection != "left") || (code == 40 && nowDirection != "up")) {
+                    return true
+                }
+            }
+
+            //键盘监听事件
+            document.addEventListener('keydown', function(e) {
+                // console.log(e.keyCode);
+                if (check(e.keyCode)) {
+                    // console.log(e.keyCode);
+
+                    for (let i = 0; i < snakes.length; i++) {
+                        clearInterval(timer)
+                        timer = setInterval(() => {
+                            move(e.keyCode)
+                                // console.log(e.keyCode);
+                            ifEatFood(e.keyCode)
+                                // snakes.unshift(createSnake(37))
+                                // map.removeChild(map.children[children.length])
+                                // snakes.pop()
+                        }, timeSpan);
+
+                    }
+
+
+                }
+
+
+            })
+
+            //屏幕输入
+            up.addEventListener('click', function() {
+                console.log(nowDirection);
+                nowcode = 38;
+                if (check(nowcode)) {
+                    for (let i = 0; i < snakes.length; i++) {
+                        clearInterval(timer)
+                        timer = setInterval(() => {
+                            move(38)
+                            ifEatFood(38)
+                                // snakes.unshift(createSnake(37))
+                                // map.removeChild(map.children[children.length])
+                                // snakes.pop()
+                        }, timeSpan);
+
+                    }
+                }
+
+            })
+            left.addEventListener('click', function() {
+                console.log(nowDirection);
+                nowcode = 37;
+                if (check(nowcode)) {
+                    for (let i = 0; i < snakes.length; i++) {
+                        clearInterval(timer)
+                        timer = setInterval(() => {
+                            move(37)
+                            ifEatFood(37)
+                                // snakes.unshift(createSnake(37))
+                                // map.removeChild(map.children[children.length])
+                                // snakes.pop()
+                        }, timeSpan);
+
+                    }
+                }
+
+            })
+            down.addEventListener('click', function() {
+                console.log(nowDirection);
+                console.log(nowcode);
+                nowcode = 40;
+                if (check(nowcode)) {
+                    for (let i = 0; i < snakes.length; i++) {
+                        clearInterval(timer)
+                        timer = setInterval(() => {
+                            move(40)
+                            ifEatFood(40)
+                                // snakes.unshift(createSnake(37))
+                                // map.removeChild(map.children[children.length])
+                                // snakes.pop()
+                        }, timeSpan);
+
+                    }
+                }
+
+            })
+            right.addEventListener('click', function() {
+                console.log(nowDirection);
+                nowcode = 39;
+                if (check(nowcode)) {
+                    // nowDirection = "right";
+                    for (let i = 0; i < snakes.length; i++) {
+                        clearInterval(timer)
+                        timer = setInterval(() => {
+                            move(39)
+                            ifEatFood(39)
+                                // snakes.unshift(createSnake(37))
+                                // map.removeChild(map.children[children.length])
+                                // snakes.pop()
+                        }, timeSpan);
+
+                    }
+                }
+
+            })
+        </script>
+    </div>
+
+</body>
+
+</html>
