@@ -22,8 +22,9 @@
     var volumeList;
     var nv = new niivue.Niivue({ isResizeCanvas: false });
     nv.attachTo("gl");
-    const imgFile = new FormData();
     document.getElementById("btn").addEventListener("change", async function (e) {
+      const imgFile = new FormData();
+      console.log(e.target.files[0].name);
       imgFile.append(e.target.files[0].name, e.target.files[0]);
       await axios.post("http://zjl.akmdmc.com/uploadImg", imgFile, {
         'Content-type': 'multipart/form-data'
@@ -32,8 +33,18 @@
           volumeList = [
             { url: data.imgUrl },
           ];
-          nv.loadVolumes(volumeList);
+          console.log(data.imgUrl);
+          try {
+            nv.loadVolumes(volumeList);
+          } catch (err) {
+            alert("加载失败");
+            console.log(err);
+          }
         })
+        .catch((err) => {
+          alert("上传失败");
+          console.log(err);
+        });
     });
   </script>
 </body>
