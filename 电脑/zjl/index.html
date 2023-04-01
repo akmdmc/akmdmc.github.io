@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <title>NiiVue</title>
+  <style>
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  </style>
+  <script src="https://unpkg.com/@niivue/niivue@0.32.0/dist/niivue.umd.js"></script>
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+</head>
+
+<body>
+  <canvas id="gl" width="840px" height="640px"></canvas>
+  <input type="file" id="btn"> 上传 </input>
+  <script>
+    var volumeList;
+    var nv = new niivue.Niivue({ isResizeCanvas: false });
+    nv.attachTo("gl");
+    const imgFile = new FormData();
+    document.getElementById("btn").addEventListener("change", async function (e) {
+      imgFile.append(e.target.files[0].name, e.target.files[0]);
+      await axios.post("http://zjl.akmdmc.com/uploadImg", imgFile, {
+        'Content-type': 'multipart/form-data'
+      })
+        .then(({ data }) => {
+          volumeList = [
+            { url: data.imgUrl },
+          ];
+          nv.loadVolumes(volumeList);
+        })
+    });
+  </script>
+</body>
+
+</html>
