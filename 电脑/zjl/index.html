@@ -7,8 +7,312 @@
   <style>
     body {
       display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: start;
+    }
+
+    .label {
+      color: white;
+      background-color: #1e90ff;
+      margin-top: 20px;
+      padding: 10px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .label:hover {
+      background-color: #6495ed;
+      box-shadow: 0 0 8px 1px rgba(255, 255, 255, 0.6);
+      transform: scale(1.05);
+    }
+
+    #btn {
+      display: none;
+    }
+
+    #gl {
+      margin-top: 4%;
+      /* width: 70vw;
+      height: 85vh; */
+      border: 1px solid white;
+      border-radius: 3px;
+    }
+
+    #drawingBoard {
+      position: fixed;
+      top: 0;
+      left: 50%;
+      margin-top: 29px;
+      transform: translate(-50%, 0);
+      background-color: transparent;
+      /* width: 70vw;
+      height: 85vh; */
+      border-radius: 3px;
+      z-index: 100;
+      cursor: crosshair;
+      display: none;
+    }
+
+    #tools {
+      position: fixed;
+      top: 0;
+      left: 0;
+      /* margin-top: 20px; */
+      width: 20%;
+      height: 10vh;
+      min-width: 200px;
+      border-radius: 3px;
+      display: flex;
+      flex-direction: raw;
       align-items: center;
       justify-content: center;
+      background-color: rgb(1, 132, 127);
+      box-shadow: 0 0 6px 1px rgba(255, 255, 255, 0.7);
+      transform: scale(0);
+      transition: all 0.3s ease;
+      z-index: 10;
+    }
+
+    .toolIcon {
+      height: 60%;
+      cursor: pointer;
+      transition: all 0.3s;
+      transform: scale(1);
+      margin-right: 20px;
+    }
+
+    .toolIcon1 {
+      /* width: 40%; */
+      margin-left: 10px;
+    }
+
+    .toolIcon:hover {
+      transform: scale(1.2);
+    }
+
+    #toolsConfigBox {
+      position: fixed;
+      top: 11%;
+      left: 0;
+      width: 15vw;
+      min-width: 180px;
+      /* height: 300px; */
+      border-radius: 3px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: start;
+      background-color: rgb(1, 132, 127);
+      box-shadow: 0 0 6px 1px rgba(255, 255, 255, 0.7);
+      transform: scale(0);
+      transition: all 0.3s ease;
+      z-index: 10;
+    }
+
+    .configItem {
+      display: flex;
+      flex-direction: column;
+      align-items: start;
+      justify-content: start;
+      width: 90%;
+      height: 70px;
+      margin-top: 10px;
+    }
+
+    .descriptioon {
+      color: white;
+      font-size: 13px;
+    }
+
+    .couple {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      height: 50px;
+    }
+
+    .couple label {
+      width: 15%;
+      aspect-ratio: 1;
+      margin-right: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #1e90ff;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .couple input[type="text"] {
+      width: 70%;
+      height: 40%;
+      border-radius: 6px;
+      border: 1px solid white;
+      background-color: transparent;
+      color: white;
+      padding: 5px;
+      border: 1px solid white;
+      outline: none;
+      color: white;
+      text-indent: 5px;
+      font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    }
+
+    .couple input[type="text"]:focus {
+      border: 1px solid #1e90ff;
+    }
+
+    input[type="color"] {
+      display: none;
+    }
+
+    #config1Color {
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+
+
+    .list {
+      position: fixed;
+      top: 3%;
+      right: 2%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 25px;
+      height: 25px;
+      z-index: 11;
+      border: 1px solid rgba(255, 255, 255, 0.6);
+      background-color: rgba(255, 255, 255, 0.7);
+      border-radius: 5px;
+      padding: 5px;
+    }
+
+    .list:hover {
+      background-color: rgba(255, 255, 255, 0.8);
+    }
+
+    #chooses {
+      position: fixed;
+      top: calc(5% + 30px);
+      right: 2%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: start;
+      width: 10vw;
+      min-width: 100px;
+      z-index: 11;
+      border: 1px solid rgba(255, 255, 255, 0.6);
+      background-color: rgba(255, 255, 255, 0.7);
+      border-radius: 5px;
+      padding: 5px;
+      transform: scale(0);
+      transition: all 0.3s ease;
+    }
+
+    .chooseItem {
+      width: 90%;
+      border-radius: 5px;
+      padding: 5px;
+      overflow: auto;
+      text-align: center;
+    }
+
+    .chooseItem:first-child {
+      margin-top: 8px;
+    }
+
+    .chooseItem:last-child {
+      margin-bottom: 8px;
+    }
+
+    .chooseItem:hover {
+      background-color: rgba(255, 255, 255, 0.8);
+    }
+
+    #helpBox {
+      position: fixed;
+      top: 3%;
+      left: 50%;
+      transform: translateX(-50%) scale(0);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: start;
+      width: 80vw;
+      height: 90vh;
+      z-index: 21;
+      border: 1px solid rgba(255, 255, 255, 0.6);
+      background-color: rgba(255, 255, 255, 1);
+      border-radius: 5px;
+      padding: 5px;
+      overflow: auto;
+      transition: all 0.3s ease;
+    }
+
+    #helpBox h2 {
+      width: 90%;
+      padding-bottom: 20px;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    }
+
+    #helpBox .title {
+      width: 90%;
+    }
+
+    #helpBox p {
+      text-indent: 20px;
+      width: 90%;
+    }
+
+    #helpBox .close {
+      position: absolute;
+      top: 2%;
+      right: 2%;
+      width: 20px;
+      height: 20px;
+      background-color: rgba(255, 255, 255, 0.8);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    .helpTable {
+      width: 80%;
+      /* border: 1px solid rgba(0, 0, 0, 0.1); */
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: start;
+    }
+
+    .helpItem {
+      width: 100%;
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      border-radius: 6px;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      padding: 5px;
+    }
+
+    .helpItemTitle {
+      width: 30%;
+      text-align: center;
+    }
+
+    .helpItemContent {
+      width: 60%;
+      text-align: center;
     }
   </style>
   <script src="https://unpkg.com/@niivue/niivue@0.32.0/dist/niivue.umd.js"></script>
@@ -16,8 +320,102 @@
 </head>
 
 <body>
+  <div id="toolsConfigBox">
+  </div>
+  <div id="helpBox">
+    <div class="close">
+      <svg t="1680780013165" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg"
+        p-id="7662" width="64" height="64">
+        <path
+          d="M952.311261 921.328619 542.892591 510.919389 950.154131 102.671381c8.53028-8.55177 8.53028-22.416546 0-30.967292-8.532327-8.55177-22.360264-8.55177-30.892591 0l-407.262564 408.248008L104.737436 71.704089c-8.53028-8.55177-22.36231-8.55177-30.892591 0-8.529257 8.55177-8.529257 22.416546 0 30.967292l407.262564 408.248008L71.687716 921.328619c-8.529257 8.55177-8.529257 22.416546 0 30.967292 4.26514 4.27435 9.856485 6.41306 15.446807 6.41306 5.590322 0 11.181667-2.13871 15.446807-6.41306l409.41867-410.409231 409.41867 410.409231c4.266164 4.27435 9.855462 6.41306 15.446807 6.41306 5.591345 0 11.17962-2.13871 15.446807-6.41306C960.841541 943.745165 960.841541 929.879366 952.311261 921.328619z"
+          fill="#272636" p-id="7663"></path>
+      </svg>
+    </div>
+    <h2>帮助</h2>
+    <h4 class="title">注意事项</h4>
+    <p>1. 请上传 .nii 或 .nii.gz 文件</p>
+    <p>2. 文件解析较长，请耐心等待(一般约为30s左右)</p>
+    <p>3. 画板功能为独立功能，不与解析后 .nii 3D图层 相混合</p>
+    <h4 class="title">打开画板</h4>
+    <p>将打开画板功能(在左上角显现), <span style="color: red;"> 注意 </span>:此时无法转动 .nii 3D图片！</p>
+    <div class="helpTable">
+      <div class="helpItem">
+        <div class="helpItemTitle">画笔</div>
+        <div class="helpItemContent">
+          <p>画笔功能可以在画板上绘制图形</p>
+          <p>点击颜色块可以选择颜色,输入颜色值(可以为"#1e90ff" "rgba(0,0,0,0.8)" "red" 等值)也可以选择颜色</p>
+          <p>点击画笔按钮, 选择画笔颜色,选择画笔宽度, 点击画板即可绘制</p>
+        </div>
+      </div>
+      <div class="helpItem">
+        <div class="helpItemTitle">橡皮擦</div>
+        <div class="helpItemContent">
+          <p>橡皮擦功能可以在画板上擦除图形</p>
+          <p>点击橡皮擦按钮,选择橡皮擦宽度, 点击画板即可擦除</p>
+          <p>双击橡皮擦按钮，可以清空画板</p>
+        </div>
+      </div>
+      <div class="helpItem">
+        <div class="helpItemTitle">箭头</div>
+        <div class="helpItemContent">
+          <p>切换为正常的鼠标状态</p>
+        </div>
+      </div>
+    </div>
+    <h4 class="title">关闭画板</h4>
+    <p>点击画板上的关闭按钮即可关闭画板</p>
+    <p>此时画板上内容与画板工具都会消失，可以转动 .nii 3D图片</p>
+    <h4 class="title">上传文件</h4>
+    <p>请选择 .nii 或者 .nii.gz 文件上传</p>
+  </div>
+  <div id="chooses">
+    <div class="chooseItem" id="drawBoradBtn" style="user-select:none;">打开画板</div>
+    <label class="chooseItem" for="btn">上传文件</label>
+    <div class="chooseItem" id="help" style="user-select: none;">帮助</div>
+  </div>
+  <canvas id="drawingBoard" width="840px" height="640px"></canvas>
   <canvas id="gl" width="840px" height="640px"></canvas>
-  <input type="file" id="btn"> 上传 </input>
+  <input type="file" id="btn">
+  <div id="tools">
+    <svg t="1680760206458" class="toolIcon toolIcon1" viewBox="0 0 1024 1024" version="1.1"
+      xmlns="http://www.w3.org/2000/svg" p-id="2535" width="64" height="64">
+      <path
+        d="M295.581454 931.441151 92.254451 728.115155l562.02665-562.031684 203.325996 203.325996L295.581454 931.441151 295.581454 931.441151zM295.581454 931.441151"
+        fill="#F9D2E4" p-id="2536"></path>
+      <path
+        d="M988.661735 143.042181 880.643352 35.02984c-26.31967-26.31967-70.851666-24.461989-99.461973 4.153353L679.701633 140.662939l203.325996 203.325996L984.507375 242.510195C1013.111641 213.893847 1014.976371 169.360844 988.661735 143.042181L988.661735 143.042181zM988.661735 143.042181"
+        fill="#F9D2E4" p-id="2537"></path>
+      <path
+        d="M73.372554 760.101509 1.485823 1022.19971l262.070009-71.887738L73.372554 760.101509zM73.372554 760.101509"
+        fill="#F9D2E4" p-id="2538"></path>
+    </svg>
+    <svg t="1680760523076" class="toolIcon toolIcon2" viewBox="0 0 1024 1024" version="1.1"
+      xmlns="http://www.w3.org/2000/svg" p-id="3114" width="64" height="64">
+      <path
+        d="M567.024534 149.331607m60.339779 60.339778l199.422968 199.422969q60.339779 60.339779 0 120.679557l-184.941421 184.941422q-60.339779 60.339779-120.679558 0l-199.422968-199.422969q-60.339779-60.339779 0-120.679557l184.941421-184.941422q60.339779-60.339779 120.679558 0Z"
+        fill="#F9D2E4" p-id="3115"></path>
+      <path
+        d="M557.653333 256l211.2 213.333333-302.08 298.666667H346.88l-151.466667-151.466667L557.653333 256m0-85.333333a85.333333 85.333333 0 0 0-60.586666 24.746666L135.253333 554.666667a85.333333 85.333333 0 0 0 0 120.746666L311.466667 853.333333h190.293333l327.253333-327.253333a85.333333 85.333333 0 0 0 0-120.746667l-211.2-211.2A85.333333 85.333333 0 0 0 557.653333 170.666667z"
+        fill="#F9D2E4" p-id="3116"></path>
+      <path
+        d="M332.8 768m42.666667 0l469.333333 0q42.666667 0 42.666667 42.666667l0 0q0 42.666667-42.666667 42.666666l-469.333333 0q-42.666667 0-42.666667-42.666666l0 0q0-42.666667 42.666667-42.666667Z"
+        fill="#F9D2E4" p-id="3117"></path>
+    </svg>
+    <svg t="1680760701080" class="toolIcon toolIcon3" viewBox="0 0 1024 1024" version="1.1"
+      xmlns="http://www.w3.org/2000/svg" p-id="4182" width="64" height="64">
+      <path
+        d="M278.209 198.442l6.069 525.867c0.319 27.612 22.961 49.738 50.574 49.42a50 50 0 0 0 32.173-12.216l127.94-110.903 130.458 225.959c13.807 23.914 44.386 32.108 68.3 18.301l54.816-31.648c23.915-13.807 32.108-44.386 18.301-68.3l-130.457-225.96 160.128-55.387c26.097-9.026 39.935-37.5 30.908-63.597a50 50 0 0 0-21.718-26.644L353.74 154.877c-23.742-14.102-54.42-6.288-68.523 17.454a50 50 0 0 0-7.008 26.111z"
+        fill="#F9D2E4" p-id="4183"></path>
+    </svg>
+  </div>
+  <div class="list">
+    <svg t="1680770441789" class="" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="5170"
+      width="64" height="64">
+      <path
+        d="M187.392 70.656q28.672 0 48.64 19.456t19.968 48.128l0 52.224q0 28.672-19.968 48.64t-48.64 19.968l-54.272 0q-27.648 0-47.616-19.968t-19.968-48.64l0-52.224q0-28.672 19.968-48.128t47.616-19.456l54.272 0zM889.856 70.656q27.648 0 47.616 19.456t19.968 48.128l0 52.224q0 28.672-19.968 48.64t-47.616 19.968l-437.248 0q-28.672 0-48.64-19.968t-19.968-48.64l0-52.224q0-28.672 19.968-48.128t48.64-19.456l437.248 0zM187.392 389.12q28.672 0 48.64 19.968t19.968 48.64l0 52.224q0 27.648-19.968 47.616t-48.64 19.968l-54.272 0q-27.648 0-47.616-19.968t-19.968-47.616l0-52.224q0-28.672 19.968-48.64t47.616-19.968l54.272 0zM889.856 389.12q27.648 0 47.616 19.968t19.968 48.64l0 52.224q0 27.648-19.968 47.616t-47.616 19.968l-437.248 0q-28.672 0-48.64-19.968t-19.968-47.616l0-52.224q0-28.672 19.968-48.64t48.64-19.968l437.248 0zM187.392 708.608q28.672 0 48.64 19.968t19.968 47.616l0 52.224q0 28.672-19.968 48.64t-48.64 19.968l-54.272 0q-27.648 0-47.616-19.968t-19.968-48.64l0-52.224q0-27.648 19.968-47.616t47.616-19.968l54.272 0zM889.856 708.608q27.648 0 47.616 19.968t19.968 47.616l0 52.224q0 28.672-19.968 48.64t-47.616 19.968l-437.248 0q-28.672 0-48.64-19.968t-19.968-48.64l0-52.224q0-27.648 19.968-47.616t48.64-19.968l437.248 0z"
+        fill="#F9D2E4" p-id="5171"></path>
+    </svg>
+  </div>
   <script>
     var volumeList;
     var nv = new niivue.Niivue({ isResizeCanvas: false });
@@ -46,6 +444,200 @@
           console.log(err);
         });
     });
+
+    const tools = document.querySelector("#tools");
+    const toolsConfigBox = document.querySelector("#toolsConfigBox");
+    let drawBoradIsShow = false;
+    const drawingBoard = document.querySelector("#drawingBoard");
+    const ctx = drawingBoard.getContext("2d");
+    const ENUM_TOOLS = {
+      PEN: 1,
+      ERASER: 2,
+      POINTER: 3,
+    };
+    let nowTool = ENUM_TOOLS.POINTER;
+    const penConfig = {
+      color: "blue",
+      width: 3,
+    };
+    const eraserConfig = {
+      width: 20,
+    };
+
+    const list = document.querySelector(".list");
+    const chooses = document.querySelector("#chooses");
+    let choosesIsShow = true;
+    list.addEventListener("click", function (e) {
+      if (choosesIsShow) {
+        chooses.style.transform = "scale(0)";
+        chooses.style.width = "0";
+        // chooses.style.height = "0";
+        choosesIsShow = false;
+      } else {
+        chooses.style.transform = "scale(1)";
+        chooses.style.width = "10vw";
+        // chooses.style.height = "300px";
+        choosesIsShow = true;
+      }
+    });
+
+    const drawBoradBtn = document.querySelector("#drawBoradBtn");
+    drawBoradBtn.addEventListener("click", function (e) {
+      if (drawBoradIsShow) {
+        drawBoradIsShow = false;
+        drawingBoard.style.display = "none";
+        drawBoradBtn.innerText = "打开画板";
+        toolsConfigBox.style.transform = "scale(0)";
+        toolsConfigBox.style.width = "0";
+        tools.style.transform = "scale(0)";
+        tools.style.width = "0";
+      } else {
+        drawBoradIsShow = true;
+        drawingBoard.style.display = "block";
+        drawBoradBtn.innerText = "关闭画板";
+        tools.style.transform = "scale(1)";
+        tools.style.width = "20vw";
+      }
+    });
+
+    const helpBox = document.querySelector("#helpBox");
+    const helpBtn = document.querySelector("#help");
+    const closeHelp = document.querySelector("#helpBox .close");
+    helpBtn.addEventListener("click", function () {
+      helpBox.style.transform = "translateX(-50%) scale(1)";
+    });
+
+    closeHelp.addEventListener("click", function () {
+      helpBox.style.transform = "translateX(-50%) scale(0)";
+    });
+
+    //icon
+    document.querySelector(".toolIcon1").addEventListener("click", function () {
+      nowTool = ENUM_TOOLS.PEN;
+      drawingBoard.removeEventListener("mousedown", onMouseDown_2);
+      drawingBoard.removeEventListener("touchstart", onMouseDown_2);
+      drawingBoard.addEventListener("mousedown", onMouseDown_1);
+      drawingBoard.addEventListener("touchstart", onMouseDown_1);
+      showConfig(ENUM_TOOLS.PEN);
+    });
+
+    document.querySelector(".toolIcon2").addEventListener("click", function () {
+      nowTool = ENUM_TOOLS.ERASER;
+      drawingBoard.removeEventListener("mousedown", onMouseDown_1);
+      drawingBoard.removeEventListener("touchstart", onMouseDown_1);
+      drawingBoard.addEventListener("mousedown", onMouseDown_2);
+      drawingBoard.addEventListener("touchstart", onMouseDown_2);
+      showConfig(ENUM_TOOLS.ERASER);
+    });
+
+    document.querySelector(".toolIcon2").addEventListener("dblclick", function () {
+      ctx.clearRect(0, 0, drawingBoard.width, drawingBoard.height);
+    });
+
+    document.querySelector(".toolIcon3").addEventListener("click", function () {
+      nowTool = ENUM_TOOLS.POINTER;
+      drawingBoard.removeEventListener("mousedown", onMouseDown_1);
+      drawingBoard.removeEventListener("touchstart", onMouseDown_1);
+      drawingBoard.removeEventListener("mousedown", onMouseDown_2);
+      drawingBoard.removeEventListener("touchstart", onMouseDown_2);
+      showConfig(ENUM_TOOLS.POINTER);
+    });
+
+
+    function onMouseDown_1(e) {
+      const { offsetX, offsetY } = e;
+      ctx.beginPath();
+      ctx.moveTo(offsetX, offsetY);
+      drawingBoard.addEventListener("mousemove", onMove_1);
+      drawingBoard.addEventListener("mouseup", onUp_1);
+    }
+
+    function onMove_1(e) {
+      ctx.lineTo(e.offsetX, e.offsetY);
+      ctx.strokeStyle = penConfig.color;
+      ctx.lineWidth = penConfig.width;
+      ctx.stroke();
+    }
+
+    function onUp_1(e) {
+      drawingBoard.removeEventListener("mousemove", onMove_1);
+      drawingBoard.removeEventListener("mouseup", onUp_1);
+    }
+
+    function onMouseDown_2(e) {
+      drawingBoard.addEventListener("mousemove", onMove_2);
+      drawingBoard.addEventListener("mouseup", onUp_2);
+    }
+
+    function onMove_2(e) {
+      ctx.clearRect(e.offsetX, e.offsetY, eraserConfig.width, eraserConfig.width);
+    }
+
+    function onUp_2(e) {
+      drawingBoard.removeEventListener("mousemove", onMove_2);
+      drawingBoard.removeEventListener("mouseup", onUp_2);
+    }
+
+    function showConfig(configType) {
+      toolsConfigBox.style.transform = "scale(1)";
+      toolsConfigBox.style.width = "15vw";
+      // toolsConfigBox.style.height = "300px";
+      if (configType === ENUM_TOOLS.PEN) {
+        toolsConfigBox.innerHTML = `    <div class="configItem">
+      <div class="descriptioon">颜色</div>
+      <div class="couple">
+        <label id="config1Box" for="config1Color"></label>
+        <input type="color" id="config1Color">
+        <input type="text" id="config1Text">
+      </div>
+    </div>
+    <div class="configItem">
+      <div class="descriptioon">宽度</div>
+      <div class="couple">
+        <input type="range" id="config2">
+      </div>
+    </div>`;
+        const config1Box = document.querySelector("#config1Box");
+        const config1Text = document.querySelector("#config1Text");
+        const config2Range = document.querySelector("#config2");
+        const config1Color = document.querySelector("#config1Color");
+        config1Box.style.backgroundColor = penConfig.color;
+        config1Text.value = penConfig.color;
+        config2Range.value = penConfig.width * 10;
+        config1Text.addEventListener("change", function (e) {
+          penConfig.color = e.target.value;
+          config1Box.style.backgroundColor = penConfig.color;
+        });
+        config2Range.addEventListener("change", function (e) {
+          penConfig.width = e.target.value / 10;
+          config2Range.value = penConfig.width * 10;
+        });
+        config1Color.addEventListener("change", function (e) {
+          penConfig.color = e.target.value;
+          config1Box.style.backgroundColor = penConfig.color;
+          config1Text.value = penConfig.color;
+        });
+      }
+      else if (configType === ENUM_TOOLS.ERASER) {
+        toolsConfigBox.innerHTML = `    <div class="configItem">
+      <div class="descriptioon">宽度</div>
+      <div class="couple">
+        <input type="range" id="config1">
+      </div>
+    </div>`
+        const config1Range = document.querySelector("#config1");
+        config1Range.value = eraserConfig.width;
+        config1Range.addEventListener("change", function (e) {
+          eraserConfig.width = e.target.value;
+          config1Range.value = eraserConfig.width;
+        });
+      }
+      else if (configType === ENUM_TOOLS.POINTER) {
+        toolsConfigBox.style.transform = "scale(0)";
+        toolsConfigBox.style.width = "0";
+        // toolsConfigBox.style.height = "0";
+      }
+    }
   </script>
 </body>
 
