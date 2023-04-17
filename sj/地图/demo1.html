@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"
+    integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI=" crossorigin="" />
+  <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"
+    integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM=" crossorigin=""></script>
+
+  <style>
+    #map {
+      height: 680px;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="map"></div>
+  <script>
+    const latlngsArr = []; //路段数组 每个数组元素是一个路段的坐标数组
+    const circlesArr = []; //车流量数组 每个数组元素是一个车流量圈的坐标数组
+    const carFlowDataArr = [];
+    let date = 5;
+    // setInterval(() => {
+    //   date+=5;
+    //   console.log(date);
+    // }, 17);
+    const CONGESTION_DEGREE = {
+      level1: "rgb(90, 255, 0)", // <=24
+      level2: "rgb(180, 253, 0)", // <=48
+      level3: "rgb(244, 255, 0)", // <=72
+      level4: "rgb(254, 212, 0)", // <=96
+      level5: "rgb(255, 126, 0)", // <=120
+      level6: "rgb(252, 49, 2)", // <=144
+      level7: "rgb(255, 0, 0)", // >144
+    }//拥堵程度颜色 min0, max170
+    //地图
+    const map = L.map('map')
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19,
+      attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+    }).addTo(map);
+
+    window.onload = async function () {
+      await createLines();
+      await carFlowShow();
+      console.log(carFlowDataArr[0][1]);
+    }
+
+    function createLine(latlngs) {
+      const polyline = L.polyline(latlngs, { color: 'gray', weight: 6 }).addTo(map);
+      // zoom the map to the polyline
+      map.fitBounds(polyline.getBounds());
+    }
+
+    function getColor(d) {
+      return d > 60 ? CONGESTION_DEGREE.level7 :
+        d > 50 ? CONGESTION_DEGREE.level6 :
+          d > 40 ? CONGESTION_DEGREE.level5 :
+            d > 30 ? CONGESTION_DEGREE.level4 :
+              d > 20 ? CONGESTION_DEGREE.level3 :
+                d > 10 ? CONGESTION_DEGREE.level2 :
+                  CONGESTION_DEGREE.level1;
+    }
+    // createLine(latlngs);
+
+    async function createLines() {
+      await fetch("./load_track_detail.json")
+        .then(async response => {
+          await response.json().then(data => {
+            data.forEach(item => {
+              const latlngs = [];
+              for (let i = 1; i <= 4; i++) {
+                if (item[`lat${i}`] && item[`lat${i}`] !== 'NULL') {
+                  latlngs.push([item[`lat${i}`], item[`lng${i}`]]);
+                }
+              }
+              latlngsArr.push(latlngs);
+            });
+          });
+        })
+      createLine(latlngsArr);
+    }
+
+    async function carFlowShow() {
+      await fetch("./道路流量表/five_carflow20140101.json")
+        .then(async response => {
+          await response.json().then(data => {
+            // const item = data[0];
+            // console.log(item);
+            let nowRoadId = "1";
+            let nowRoadData = [];
+            data.forEach(item => {
+              if (item['road_id'] === nowRoadId) {
+                nowRoadData.push(item);
+              } else {
+                const item1 = nowRoadData[0];
+                createCircle(nowRoadData, getRoadStart(item1['road_id']), getRoadFinish(item1['road_id']), item1['car_flow_in'], item1['car_flow_out']);//in 
+                carFlowDataArr.push(nowRoadData);
+                nowRoadId = item['road_id'];
+                nowRoadData = [];
+                nowRoadData.push(item);
+              }
+            });
+          });
+        })
+    }
+
+    function getRoadStart(roadId) {
+      return latlngsArr[roadId - 1][0];
+    }
+
+    function getRoadFinish(roadId) {
+      return latlngsArr[roadId - 1][latlngsArr[roadId - 1].length - 1];
+    }
+
+    async function moveCircles() {
+      let time = 1;
+      for (let i = 0; i < carFlowDataArr.length - 1; i++) {
+        const item = carFlowDataArr[i];
+        await moveCircle(item, time);
+      }
+    }
+
+    const circle_config = {
+      startOpacity: 0.6,
+      radius: 150,
+      moveStep: 100,
+      interaalTime: 40,
+    }
+
+    function createCircle(nowRoadData, latlngsStart, latlngsFinish, carInNum, carOutNum) {
+      // console.log(latlngsStart, latlngsFinish, carNum);
+      let nowLatngs = [parseFloat(latlngsStart[0]), parseFloat(latlngsStart[1])];
+      const circle = L.circle(latlngsStart, {
+        stroke: false,
+        fillColor: getColor(carInNum),
+        fillOpacity: 0.8,
+        radius: circle_config.radius,
+      }).addTo(map);
+      circlesArr.push(circle);
+      const interaal = setInterval(() => {
+        nowLatngs[0] += (parseFloat(latlngsFinish[0]) - parseFloat(latlngsStart[0])) / circle_config.moveStep;
+        nowLatngs[1] += (parseFloat(latlngsFinish[1]) - parseFloat(latlngsStart[1])) / circle_config.moveStep;
+        circle.setLatLng([nowLatngs[0].toString(), nowLatngs[1].toString()]);
+        if (nowLatngs[0] - parseFloat(latlngsFinish[0]) < 0.00000001 && nowLatngs[1] - parseFloat(latlngsFinish[1]) < 0.00000001) {
+          clearInterval(interaal);
+          circle.setStyle({ fillOpacity: 0, fillColor: getColor(carOutNum), });
+          moveCircle(nowRoadData, 1);
+        }
+      }, circle_config.interaalTime);
+    }
+
+    async function moveCircle(item, time1) {
+      let time = time1;
+      move(item[0]['road_id'], getRoadStart(item[0]['road_id']), getRoadFinish(item[0]['road_id']), item[0]['car_flow_in'], item[0]['car_flow_out'], circle_config.startOpacity);
+      const start = getRoadStart(item[0]['road_id']);
+      const finish = getRoadFinish(item[0]['road_id']);
+      // console.log((start[0] - finish[0]) * 1000, (finish[1] - start[1]) * 1000);
+      async function move(roadId, latlngsStart, latlngsFinish, carInNum, carOutNum, opecity) {
+        let nowLatngs = [parseFloat(latlngsStart[0]), parseFloat(latlngsStart[1])];
+        let nowOpecity = opecity;
+        const circle = circlesArr[parseInt(roadId)]
+        if (!circle) return;
+        await circle.setLatLng(latlngsStart);
+        await circle.setStyle({
+          stroke: false,
+          fillColor: getColor(carInNum),
+          fillOpacity: opecity,
+          radius: circle_config.radius,
+        });
+        const moveStep = circle_config.moveStep;
+        let time = 0
+        // const timer = setInterval(() => {
+        //   time++;
+        // }, 10);
+        animation();
+        async function animation(e) {
+          nowLatngs[0] += (parseFloat(latlngsFinish[0]) - parseFloat(latlngsStart[0])) / moveStep;
+          nowLatngs[1] += (parseFloat(latlngsFinish[1]) - parseFloat(latlngsStart[1])) / moveStep;
+          if ((Math.abs((start[0] - finish[0])) * 100 + Math.abs((finish[1] - start[1])) * 100) / 2 < 0.2) {
+            nowOpecity -= 0.8 / moveStep;
+          }
+          else if ((Math.abs((start[0] - finish[0])) * 100 + Math.abs((finish[1] - start[1])) * 100) / 2 > 1) {
+            nowOpecity += 0.8 / moveStep;
+          }
+          await circle.setLatLng([nowLatngs[0].toString(), nowLatngs[1].toString()]);
+          await circle.setStyle({ fillOpacity: nowOpecity });
+          if (nowLatngs[0] - parseFloat(latlngsFinish[0]) < 0.00000001 && nowLatngs[1] - parseFloat(latlngsFinish[1]) < 0.00000001) {
+            // clearInterval(timer);
+            // console.log(timer);
+            await circle.setStyle({ fillOpacity: 0, fillColor: getColor(carOutNum), });
+            time++;
+            if (time < 288) {
+              move(roadId, latlngsStart, latlngsFinish, item[time]['car_flow_in'], item[time]['car_flow_out'], circle_config.startOpacity);
+            }
+          }
+          else {
+            requestAnimationFrame(animation);
+          }
+        }
+      }
+    }
+  </script>
+</body>
+
+</html>
