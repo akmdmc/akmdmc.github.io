@@ -24,6 +24,7 @@
     const latlngsArr = []; //路段数组 每个数组元素是一个路段的坐标数组
     const circlesArr = []; //车流量数组 每个数组元素是一个车流量圈的坐标数组
     const carFlowDataArr = [];
+    const hasCreatedMap = new Map();
     let date = 5;
     // setInterval(() => {
     //   date+=5;
@@ -48,7 +49,24 @@
     window.onload = async function () {
       await createLines();
       await carFlowShow();
-      console.log(carFlowDataArr[0][1]);
+      map.setView(latlngsArr[65][0], 15);
+      // console.log(carFlowDataArr[652]);
+      showDate();
+      map.on("moveend", (e) => {
+        const center = e.target.getCenter();
+        getRange(center);
+      })
+      function getRange(center) {
+        const DISTANCE_RANGE = 1600;
+        latlngsArr.forEach((item,i) => {
+          const distance = map.distance(center, item[0]);
+          if(distance<DISTANCE_RANGE && !hasCreatedMap.get(i)){
+            createCircle(carFlowDataArr[i]);
+            hasCreatedMap.set(i,true);
+            console.log(i);
+          }
+        })
+      }
     }
 
     function createLine(latlngs) {
@@ -80,6 +98,8 @@
                 }
               }
               latlngsArr.push(latlngs);
+              const marker = L.marker(latlngs[0]).addTo(map);
+              marker.bindPopup(`<b>${item.id}-${latlngs[0]}</b>`).openPopup();
             });
           });
         })
@@ -98,8 +118,7 @@
               if (item['road_id'] === nowRoadId) {
                 nowRoadData.push(item);
               } else {
-                const item1 = nowRoadData[0];
-                createCircle(nowRoadData, getRoadStart(item1['road_id']), getRoadFinish(item1['road_id']), item1['car_flow_in'], item1['car_flow_out']);//in 
+                // createCircle(nowRoadData);//in 
                 carFlowDataArr.push(nowRoadData);
                 nowRoadId = item['road_id'];
                 nowRoadData = [];
@@ -118,22 +137,18 @@
       return latlngsArr[roadId - 1][latlngsArr[roadId - 1].length - 1];
     }
 
-    async function moveCircles() {
-      let time = 1;
-      for (let i = 0; i < carFlowDataArr.length - 1; i++) {
-        const item = carFlowDataArr[i];
-        await moveCircle(item, time);
-      }
-    }
-
     const circle_config = {
       startOpacity: 0.6,
-      radius: 150,
+      radius: 50,
       moveStep: 100,
       interaalTime: 40,
     }
 
-    function createCircle(nowRoadData, latlngsStart, latlngsFinish, carInNum, carOutNum) {
+    function createCircle(nowRoadData) {
+      const latlngsStart = getRoadStart(nowRoadData[0]['road_id']);
+      const latlngsFinish = getRoadFinish(nowRoadData[0]['road_id']);
+      const carInNum = nowRoadData[0]['car_flow_in'];
+      const carOutNum = nowRoadData[0]['car_flow_out'];
       // console.log(latlngsStart, latlngsFinish, carNum);
       let nowLatngs = [parseFloat(latlngsStart[0]), parseFloat(latlngsStart[1])];
       const circle = L.circle(latlngsStart, {
@@ -174,10 +189,6 @@
           radius: circle_config.radius,
         });
         const moveStep = circle_config.moveStep;
-        let time = 0
-        // const timer = setInterval(() => {
-        //   time++;
-        // }, 10);
         animation();
         async function animation(e) {
           nowLatngs[0] += (parseFloat(latlngsFinish[0]) - parseFloat(latlngsStart[0])) / moveStep;
@@ -191,11 +202,9 @@
           await circle.setLatLng([nowLatngs[0].toString(), nowLatngs[1].toString()]);
           await circle.setStyle({ fillOpacity: nowOpecity });
           if (nowLatngs[0] - parseFloat(latlngsFinish[0]) < 0.00000001 && nowLatngs[1] - parseFloat(latlngsFinish[1]) < 0.00000001) {
-            // clearInterval(timer);
-            // console.log(timer);
             await circle.setStyle({ fillOpacity: 0, fillColor: getColor(carOutNum), });
             time++;
-            if (time < 288) {
+            if (time < 287) {
               move(roadId, latlngsStart, latlngsFinish, item[time]['car_flow_in'], item[time]['car_flow_out'], circle_config.startOpacity);
             }
           }
@@ -205,7 +214,13 @@
         }
       }
     }
-  </script>
+ 
+    function showDate(){
+      // setInterval(()=>{
+      //   console.log(1);
+      // },100)
+    }
+ </script>
 </body>
 
 </html>
