@@ -570,7 +570,7 @@
     }
 
     function getDayNData(day) {
-      fetch(`/道路流量表/five_carflow201401${day < 10 ? '0' + day : day}.json`)
+      fetch(`/sj/地图/道路流量表/five_carflow201401${day < 10 ? '0' + day : day}.json`)
         .then(response => {
           response.json().then(data => {
             data.forEach(val => {
@@ -581,7 +581,7 @@
     }
 
     async function getTracks() {
-      await fetch("./load_track_detail.json")
+      await fetch("/sj/地图/load_track_detail.json")
         .then(async response => {
           await response.json().then(data => {
             data.forEach(item => {
@@ -600,7 +600,7 @@
           });
         })
 
-      await fetch("/道路流量表/five_carflow20140101.json")
+      await fetch("/sj/地图/道路流量表/five_carflow20140101.json")
         .then(async response => {
           await response.json().then(data => {
             data.forEach(val => {
