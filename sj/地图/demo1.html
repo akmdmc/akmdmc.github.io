@@ -1,92 +1,586 @@
-<!DOCTYPE html>
-<html lang="en">
+<html>
 
 <head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"
-    integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI=" crossorigin="" />
-  <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"
-    integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM=" crossorigin=""></script>
-
-  <style>
-    #map {
-      height: 680px;
-    }
-  </style>
+  <meta charset='utf-8'>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.1.0/dist/leaflet.css"
+    integrity="sha512-wcw6ts8Anuw10Mzh9Ytw4pylW8+NAD4ch3lqm9lzAsTxg0GFeJgoAtxuCLREZSC5lUXdVyo/7yfsqFjQ4S+aKw=="
+    crossorigin="" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/4.0.4/echarts-en.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.3.1/leaflet.js"></script>
+  <script src="./dark.js"></script>
+  <title>车流量动态概念图</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 </head>
 
 <body>
-  <div id="map"></div>
+  <style>
+    html,
+    body,
+    #main {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+    }
+
+    #time,
+    #speed,
+    #speedText,
+    #zoomBtn,
+    #levelColor,
+    #developer {
+      position: fixed;
+      transform: translate(-50%, 0);
+      z-index: 1000;
+      color: whitesmoke;
+    }
+
+    #time {
+      top: 6%;
+      left: 25%;
+    }
+
+    #speed {
+      left: 75%;
+      top: 6%;
+    }
+
+    #speedText {
+      position: absolute;
+      left: -20%;
+      top: -5%;
+    }
+
+    #zoomBtn {
+      right: 1%;
+      bottom: 5%;
+      display: flex;
+    }
+
+    .btn {
+      margin-left: 6px;
+      border: none;
+      outline: none;
+      background-color: rgb(64, 158, 255);
+      color: whitesmoke;
+      border-radius: 5px;
+      padding: 5px 9px;
+      font-size: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all linear 0.2s;
+    }
+
+    .btn:hover {
+      background-color: rgb(43, 145, 248);
+      transform: scale(1.05);
+    }
+
+    #min {
+      padding: 5px 11px;
+    }
+
+    #levelColor {
+      left: 5%;
+      bottom: 5%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transform: translate(0, 0);
+      padding: 5px;
+    }
+
+    #levelColor span {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      margin-left: 2px;
+    }
+
+    #developer {
+      transform: translate(100%, 0);
+      right: 0%;
+      top: 20%;
+      width: 10%;
+      height: 40%;
+      background-color: whitesmoke;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-around;
+      flex-wrap: wrap;
+      transition: all ease-in-out 0.3s;
+    }
+
+    #developer input {
+      width: 60%;
+    }
+  </style>
+  <div id="zoomBtn">
+    <button class="btn" id="add">+</button>
+    <button class="btn" id="min">-</button>
+  </div>
+  <div id='main'></div>
+  <span id="time"></span>
+  <div id="speed">
+    <span id="speedText">speed: </span><input id="speedInput" type="range">
+  </div>
+  <div id="levelColor">
+    <span style="background:linear-gradient(to right,rgb(97,134,80),rgb(199,216,88));"></span>
+    <span style="background:linear-gradient(to right,rgb(199,216,88),rgb(253,216,5));"></span>
+    <span style="background:linear-gradient(to right,rgb(253,216,5), rgb(238,152,0)) ;"></span>
+    <span style="background:linear-gradient(to right, rgb(238,152,0), rgb(168,0,38));"></span>
+    <span style="background:linear-gradient(to right, rgb(168,0,38), rgb(255, 0, 0));"></span>
+  </div>
+  <section id="developer">
+    <input placeholder="day" id="developerday" type="text">
+    <button id="developerBtn" class="btn">ok</button>
+  </section>
   <script>
-    const latlngsArr = []; //路段数组 每个数组元素是一个路段的坐标数组
-    const circlesArr = []; //车流量数组 每个数组元素是一个车流量圈的坐标数组
-    const carFlowDataArr = [];
-    const hasCreatedMap = new Map();
-    let date = 5;
-    // setInterval(() => {
-    //   date+=5;
-    //   console.log(date);
-    // }, 17);
-    const CONGESTION_DEGREE = {
-      level1: "rgb(90, 255, 0)", // <=24
-      level2: "rgb(180, 253, 0)", // <=48
-      level3: "rgb(244, 255, 0)", // <=72
-      level4: "rgb(254, 212, 0)", // <=96
-      level5: "rgb(255, 126, 0)", // <=120
-      level6: "rgb(252, 49, 2)", // <=144
-      level7: "rgb(255, 0, 0)", // >144
-    }//拥堵程度颜色 min0, max170
-    //地图
-    const map = L.map('map')
-    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      maxZoom: 19,
-      attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-    }).addTo(map);
+    (function (global, factory) {
+      typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('echarts/lib/echarts'), require('leaflet/src/Leaflet')) :
+        typeof define === 'function' && define.amd ? define(['exports', 'echarts/lib/echarts', 'leaflet/src/Leaflet'], factory) :
+          (global = global || self, factory(global.leaflet = {}, global.echarts, global.L));
+    }(this, function (exports, echarts, L) {
+      'use strict';
 
-    window.onload = async function () {
-      await createLines();
-      await carFlowShow();
-      map.setView(latlngsArr[65][0], 15);
-      // console.log(carFlowDataArr[652]);
-      showDate();
-      map.on("moveend", (e) => {
-        const center = e.target.getCenter();
-        getRange(center);
-      })
-      function getRange(center) {
-        const DISTANCE_RANGE = 1600;
-        latlngsArr.forEach((item,i) => {
-          const distance = map.distance(center, item[0]);
-          if(distance<DISTANCE_RANGE && !hasCreatedMap.get(i)){
-            createCircle(carFlowDataArr[i]);
-            hasCreatedMap.set(i,true);
-            console.log(i);
-          }
-        })
+      var echarts__default = 'default' in echarts ? echarts['default'] : echarts;
+      L = L && L.hasOwnProperty('default') ? L['default'] : L;
+
+      /**
+       * constructor for Leaflet CoordSys
+       * @param {L.map} map
+       * @param {Object} api
+       */
+      function LeafletCoordSys(map, api) {
+        this._map = map;
+        this.dimensions = ['lng', 'lat'];
+        this._mapOffset = [0, 0];
+        this._api = api;
+        this._projection = L.Projection.Mercator;
       }
+
+      LeafletCoordSys.prototype.dimensions = ['lng', 'lat'];
+
+      LeafletCoordSys.prototype.setZoom = function (zoom) {
+        this._zoom = zoom;
+      };
+
+      LeafletCoordSys.prototype.setCenter = function (center) {
+        this._center = this._projection.project(new L.LatLng(center[1], center[0]));
+      };
+
+      LeafletCoordSys.prototype.setMapOffset = function (mapOffset) {
+        this._mapOffset = mapOffset;
+      };
+
+      LeafletCoordSys.prototype.getLeaflet = function () {
+        return this._map;
+      };
+
+      LeafletCoordSys.prototype.dataToPoint = function (data) {
+        var point = new L.LatLng(data[1], data[0]);
+        var px = this._map.latLngToLayerPoint(point);
+        var mapOffset = this._mapOffset;
+        return [px.x - mapOffset[0], px.y - mapOffset[1]];
+      };
+
+      LeafletCoordSys.prototype.pointToData = function (pt) {
+        var mapOffset = this._mapOffset;
+        var coord = this._map.layerPointToLatLng({
+          x: pt[0] + mapOffset[0],
+          y: pt[1] + mapOffset[1]
+        });
+        return [coord.lng, coord.lat];
+      };
+
+      LeafletCoordSys.prototype.convertToPixel = echarts.util.curry(doConvert, 'dataToPoint');
+
+      LeafletCoordSys.prototype.convertFromPixel = echarts.util.curry(doConvert, 'pointToData');
+
+      /**
+       * find appropriate coordinate system to convert
+       * @param {*} methodName
+       * @param {*} ecModel
+       * @param {*} finder
+       * @param {*} value
+       * @return {*} converted value
+       */
+      function doConvert(methodName, ecModel, finder, value) {
+        var leafletModel = finder.leafletModel;
+        var seriesModel = finder.seriesModel;
+
+        var coordSys = leafletModel ? leafletModel.coordinateSystem : seriesModel ? seriesModel.coordinateSystem || // For map.
+          (seriesModel.getReferringComponents('leaflet')[0] || {}).coordinateSystem : null;
+        /* eslint-disable no-invalid-this */
+        return coordSys === this ? coordSys[methodName](value) : null;
+      }
+
+      LeafletCoordSys.prototype.getViewRect = function () {
+        var api = this._api;
+        return new echarts.graphic.BoundingRect(0, 0, api.getWidth(), api.getHeight());
+      };
+
+      LeafletCoordSys.prototype.getRoamTransform = function () {
+        return echarts.matrix.create();
+      };
+
+      LeafletCoordSys.dimensions = LeafletCoordSys.prototype.dimensions;
+
+      var CustomOverlay = L.Layer.extend({
+        initialize: function initialize(container) {
+          this._container = container;
+        },
+
+        onAdd: function onAdd(map) {
+          var pane = map.getPane(this.options.pane);
+          pane.appendChild(this._container);
+
+          // Calculate initial position of container with
+          // `L.Map.latLngToLayerPoint()`, `getPixelOrigin()
+          // and/or `getPixelBounds()`
+
+          // L.DomUtil.setPosition(this._container, point);
+
+          // Add and position children elements if needed
+
+          // map.on('zoomend viewreset', this._update, this);
+        },
+
+        onRemove: function onRemove(map) {
+          L.DomUtil.remove(this._container);
+          // map.off('zoomend viewreset', this._update, this);
+        },
+
+        _update: function _update() {
+          // Recalculate position of container
+          // L.DomUtil.setPosition(this._container, point);
+          // Add/remove/reposition children elements if needed
+        }
+      });
+
+      LeafletCoordSys.create = function (ecModel, api) {
+        var leafletCoordSys = void 0;
+        var leafletList = [];
+        var root = api.getDom();
+
+        // TODO Dispose
+        ecModel.eachComponent('leaflet', function (leafletModel) {
+          var viewportRoot = api.getZr().painter.getViewportRoot();
+          if (typeof L === 'undefined') {
+            throw new Error('Leaflet api is not loaded');
+          }
+          if (leafletCoordSys) {
+            throw new Error('Only one leaflet component can exist');
+          }
+          if (!leafletModel.__map) {
+            // Not support IE8
+            var mapRoot = root.querySelector('.ec-extension-leaflet');
+            if (mapRoot) {
+              // Reset viewport left and top, which will be changed
+              // in moving handler in LeafletView
+              viewportRoot.style.left = '0px';
+              viewportRoot.style.top = '0px';
+              root.removeChild(mapRoot);
+            }
+            mapRoot = document.createElement('div');
+            mapRoot.style.cssText = 'width:100%;height:100%';
+            // Not support IE8
+            mapRoot.classList.add('ec-extension-leaflet');
+            root.appendChild(mapRoot);
+            var _map = leafletModel.__map = L.map(mapRoot);
+            var tiles = leafletModel.get('tiles');
+            var baseLayers = {};
+            var baseLayerAdded = false;
+            var _iteratorNormalCompletion = true;
+            var _didIteratorError = false;
+            var _iteratorError = undefined;
+
+            try {
+              for (var _iterator = tiles[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                var tile = _step.value;
+
+                var tileLayer = L.tileLayer(tile.urlTemplate, tile.options);
+                if (tile.label) {
+                  // only add one baseLayer
+                  if (!baseLayerAdded) {
+                    tileLayer.addTo(_map);
+                    baseLayerAdded = true;
+                  }
+                  baseLayers[tile.label] = tileLayer;
+                } else {
+                  // add all tiles without labels into the map
+                  tileLayer.addTo(_map);
+                }
+              }
+              // add layer control when there are more than two layers
+            } catch (err) {
+              _didIteratorError = true;
+              _iteratorError = err;
+            } finally {
+              try {
+                if (!_iteratorNormalCompletion && _iterator.return) {
+                  _iterator.return();
+                }
+              } finally {
+                if (_didIteratorError) {
+                  throw _iteratorError;
+                }
+              }
+            }
+
+            if (tiles.length > 1) {
+              var layerControlOpts = leafletModel.get('layerControl');
+              L.control.layers(baseLayers, {}, layerControlOpts).addTo(_map);
+            }
+
+            /*
+             Encapsulate viewportRoot element into
+             the parent element responsible for moving,
+             avoiding direct manipulation of viewportRoot elements
+             affecting related attributes such as offset.
+            */
+            var moveContainer = document.createElement('div');
+            moveContainer.style = 'position: relative;';
+            moveContainer.appendChild(viewportRoot);
+
+            new CustomOverlay(moveContainer).addTo(_map);
+          }
+          var map = leafletModel.__map;
+
+          // Set leaflet options
+          // centerAndZoom before layout and render
+          var center = leafletModel.get('center');
+          var zoom = leafletModel.get('zoom');
+          if (center && zoom) {
+            map.setView([center[1], center[0]], zoom);
+          }
+
+          leafletCoordSys = new LeafletCoordSys(map, api);
+          leafletList.push(leafletCoordSys);
+          leafletCoordSys.setMapOffset(leafletModel.__mapOffset || [0, 0]);
+          leafletCoordSys.setZoom(zoom);
+          leafletCoordSys.setCenter(center);
+
+          leafletModel.coordinateSystem = leafletCoordSys;
+        });
+
+        ecModel.eachSeries(function (seriesModel) {
+          if (seriesModel.get('coordinateSystem') === 'leaflet') {
+            seriesModel.coordinateSystem = leafletCoordSys;
+          }
+        });
+
+        return leafletList;
+      };
+
+      /**
+       * compare if two arrays of length 2 are equal
+       * @param {Array} a array of length 2
+       * @param {Array} b array of length 2
+       * @return {Boolean}
+       */
+      function v2Equal(a, b) {
+        return a && b && a[0] === b[0] && a[1] === b[1];
+      }
+
+      echarts__default.extendComponentModel({
+        type: 'leaflet',
+
+        getLeaflet: function getLeaflet() {
+          // __map is injected when creating LeafletCoordSys
+          return this.__map;
+        },
+
+        setCenterAndZoom: function setCenterAndZoom(center, zoom) {
+          this.option.center = center;
+          this.option.zoom = zoom;
+        },
+
+        centerOrZoomChanged: function centerOrZoomChanged(center, zoom) {
+          var option = this.option;
+          return !(v2Equal(center, option.center) && zoom === option.zoom);
+        },
+
+        defaultOption: {
+          center: [104.114129, 37.550339],
+          zoom: 2,
+          mapStyle: {},
+          roam: false,
+          layerControl: {},
+          tiles: [{
+            urlTemplate: 'http://{s}.tile.osm.org/{z}/{x}/{y}.png',
+            options: {
+              attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+            }
+          }]
+        }
+      });
+
+      echarts__default.extendComponentView({
+        type: 'leaflet',
+
+        render: function render(leafletModel, ecModel, api) {
+          var rendering = true;
+
+          var leaflet = leafletModel.getLeaflet();
+          var moveContainer = api.getZr().painter.getViewportRoot().parentNode;
+          var coordSys = leafletModel.coordinateSystem;
+
+          var moveHandler = function moveHandler(type, target) {
+            if (rendering) {
+              return;
+            }
+            var offsetEl = leaflet._mapPane;
+            // calculate new mapOffset
+            var transformStyle = offsetEl.style.transform;
+            var dx = 0;
+            var dy = 0;
+            if (transformStyle) {
+              transformStyle = transformStyle.replace('translate3d(', '');
+              var parts = transformStyle.split(',');
+              dx = -parseInt(parts[0], 10);
+              dy = -parseInt(parts[1], 10);
+            } else {
+              // browsers that don't support transform: matrix
+              dx = -parseInt(offsetEl.style.left, 10);
+              dy = -parseInt(offsetEl.style.top, 10);
+            }
+            var mapOffset = [dx, dy];
+            moveContainer.style.left = mapOffset[0] + 'px';
+            moveContainer.style.top = mapOffset[1] + 'px';
+
+            coordSys.setMapOffset(mapOffset);
+            leafletModel.__mapOffset = mapOffset;
+
+            api.dispatchAction({
+              type: 'leafletRoam'
+            });
+          };
+
+          /**
+           * handler for map zoomEnd event
+           */
+          function zoomEndHandler() {
+            if (rendering) return;
+            api.dispatchAction({
+              type: 'leafletRoam'
+            });
+          }
+
+          /**
+           * handler for map zoom event
+           */
+          function zoomHandler() {
+            moveHandler();
+          }
+
+          if (this._oldMoveHandler) {
+            leaflet.off('move', this._oldMoveHandler);
+          }
+          if (this._oldZoomHandler) {
+            leaflet.off('zoom', this._oldZoomHandler);
+          }
+          if (this._oldZoomEndHandler) {
+            leaflet.off('zoomend', this._oldZoomEndHandler);
+          }
+
+          leaflet.on('move', moveHandler);
+          leaflet.on('zoom', zoomHandler);
+          leaflet.on('zoomend', zoomEndHandler);
+
+          this._oldMoveHandler = moveHandler;
+          this._oldZoomHandler = zoomHandler;
+          this._oldZoomEndHandler = zoomEndHandler;
+
+          var roam = leafletModel.get('roam');
+          // can move
+          if (roam && roam !== 'scale') {
+            leaflet.dragging.enable();
+          } else {
+            leaflet.dragging.disable();
+          }
+          // can zoom (may need to be more fine-grained)
+          if (roam && roam !== 'move') {
+            leaflet.scrollWheelZoom.enable();
+            leaflet.doubleClickZoom.enable();
+            leaflet.touchZoom.enable();
+          } else {
+            leaflet.scrollWheelZoom.disable();
+            leaflet.doubleClickZoom.disable();
+            leaflet.touchZoom.disable();
+          }
+
+          rendering = false;
+        }
+      });
+
+      /**
+       * Leftlet component extension
+       */
+
+      echarts__default.registerCoordinateSystem('leaflet', LeafletCoordSys);
+
+      echarts__default.registerAction({
+        type: 'leafletRoam',
+        event: 'leafletRoam',
+        update: 'updateLayout'
+      }, function (payload, ecModel) {
+        ecModel.eachComponent('leaflet', function (leafletModel) {
+          var leaflet = leafletModel.getLeaflet();
+          var center = leaflet.getCenter();
+          leafletModel.setCenterAndZoom([center.lng, center.lat], leaflet.getZoom());
+        });
+      });
+
+      var version = '1.0.0';
+
+      exports.version = version;
+
+      Object.defineProperty(exports, '__esModule', { value: true });
+
+    }));
+  </script>
+  <script>
+    let nowTime = 5;
+    let nowDay = 1;
+    let timeSpeed = 200;
+
+    let dotToRoadId = new Map();
+    let roadIdAndTimeToRoadinfo = new Map();
+
+    let dotsLat = []
+    let linesLat = [];
+
+    let nowOption = {};
+
+    const nowInterval = {
+      timeInter: null,
+      inter: null,
+    };
+
+    const DOT_CONFIG = {
+      color: 'blue',
+      symbolSize: 1,
     }
 
-    function createLine(latlngs) {
-      const polyline = L.polyline(latlngs, { color: 'gray', weight: 6 }).addTo(map);
-      // zoom the map to the polyline
-      map.fitBounds(polyline.getBounds());
+    const LEAFLET_CONFIG = {
+      center: [120.6660541, 28.00335325],
+      zoom: 13,
     }
 
-    function getColor(d) {
-      return d > 60 ? CONGESTION_DEGREE.level7 :
-        d > 50 ? CONGESTION_DEGREE.level6 :
-          d > 40 ? CONGESTION_DEGREE.level5 :
-            d > 30 ? CONGESTION_DEGREE.level4 :
-              d > 20 ? CONGESTION_DEGREE.level3 :
-                d > 10 ? CONGESTION_DEGREE.level2 :
-                  CONGESTION_DEGREE.level1;
+    function getDayNData(day) {
+      fetch(`/道路流量表/five_carflow201401${day < 10 ? '0' + day : day}.json`)
+        .then(response => {
+          response.json().then(data => {
+            data.forEach(val => {
+              roadIdAndTimeToRoadinfo.set(`day${day}id${val['road_id']}time${val['time_minute']}`, val);
+            })
+          })
+        })
     }
-    // createLine(latlngs);
 
-    async function createLines() {
+    async function getTracks() {
       await fetch("./load_track_detail.json")
         .then(async response => {
           await response.json().then(data => {
@@ -97,130 +591,331 @@
                   latlngs.push([item[`lat${i}`], item[`lng${i}`]]);
                 }
               }
-              latlngsArr.push(latlngs);
-              const marker = L.marker(latlngs[0]).addTo(map);
-              marker.bindPopup(`<b>${item.id}-${latlngs[0]}</b>`).openPopup();
+              linesLat.push({
+                coords: latlngs,
+                id: item['id']
+              })
             });
+            return linesLat;
           });
         })
-      createLine(latlngsArr);
-    }
 
-    async function carFlowShow() {
-      await fetch("./道路流量表/five_carflow20140101.json")
+      await fetch("/道路流量表/five_carflow20140101.json")
         .then(async response => {
           await response.json().then(data => {
-            // const item = data[0];
-            // console.log(item);
-            let nowRoadId = "1";
-            let nowRoadData = [];
-            data.forEach(item => {
-              if (item['road_id'] === nowRoadId) {
-                nowRoadData.push(item);
-              } else {
-                // createCircle(nowRoadData);//in 
-                carFlowDataArr.push(nowRoadData);
-                nowRoadId = item['road_id'];
-                nowRoadData = [];
-                nowRoadData.push(item);
-              }
-            });
-          });
+            data.forEach(val => {
+              roadIdAndTimeToRoadinfo.set(`day${nowDay}id${val['road_id']}time${val['time_minute']}`, val);
+            })
+          })
         })
+
+      linesLat.map((track) => {
+        return track.coords.map((lat, i) => {
+          dotToRoadId.set([lat[1], lat[0]].toString(), track.id)
+        })
+      });
+
+      linesLat = linesLat.map((track) => {
+        return track.coords.map((lat) => {
+          return [lat[1], lat[0]]
+        })
+      });
+
+      // linesLat.forEach((val) => {
+      //   val.forEach((dot) => {
+      //     dotsLat.push(dot)
+      //   })
+      // })
     }
 
-    function getRoadStart(roadId) {
-      return latlngsArr[roadId - 1][0];
+    function getRoadinfo(id, time) {
+      return roadIdAndTimeToRoadinfo.get(`day${nowDay}id${id}time${time}`);
     }
 
-    function getRoadFinish(roadId) {
-      return latlngsArr[roadId - 1][latlngsArr[roadId - 1].length - 1];
-    }
-
-    const circle_config = {
-      startOpacity: 0.6,
-      radius: 50,
-      moveStep: 100,
-      interaalTime: 40,
-    }
-
-    function createCircle(nowRoadData) {
-      const latlngsStart = getRoadStart(nowRoadData[0]['road_id']);
-      const latlngsFinish = getRoadFinish(nowRoadData[0]['road_id']);
-      const carInNum = nowRoadData[0]['car_flow_in'];
-      const carOutNum = nowRoadData[0]['car_flow_out'];
-      // console.log(latlngsStart, latlngsFinish, carNum);
-      let nowLatngs = [parseFloat(latlngsStart[0]), parseFloat(latlngsStart[1])];
-      const circle = L.circle(latlngsStart, {
-        stroke: false,
-        fillColor: getColor(carInNum),
-        fillOpacity: 0.8,
-        radius: circle_config.radius,
-      }).addTo(map);
-      circlesArr.push(circle);
-      const interaal = setInterval(() => {
-        nowLatngs[0] += (parseFloat(latlngsFinish[0]) - parseFloat(latlngsStart[0])) / circle_config.moveStep;
-        nowLatngs[1] += (parseFloat(latlngsFinish[1]) - parseFloat(latlngsStart[1])) / circle_config.moveStep;
-        circle.setLatLng([nowLatngs[0].toString(), nowLatngs[1].toString()]);
-        if (nowLatngs[0] - parseFloat(latlngsFinish[0]) < 0.00000001 && nowLatngs[1] - parseFloat(latlngsFinish[1]) < 0.00000001) {
-          clearInterval(interaal);
-          circle.setStyle({ fillOpacity: 0, fillColor: getColor(carOutNum), });
-          moveCircle(nowRoadData, 1);
+    function getDotsLat() {
+      dotsLat = [];
+      linesLat.forEach((val) => {
+        for (let i = 0; i < val.length; i++) {
+          const dot = val[i];
+          dotsLat.push(dot)
         }
-      }, circle_config.interaalTime);
+      })
+      return dotsLat;
     }
 
-    async function moveCircle(item, time1) {
-      let time = time1;
-      move(item[0]['road_id'], getRoadStart(item[0]['road_id']), getRoadFinish(item[0]['road_id']), item[0]['car_flow_in'], item[0]['car_flow_out'], circle_config.startOpacity);
-      const start = getRoadStart(item[0]['road_id']);
-      const finish = getRoadFinish(item[0]['road_id']);
-      // console.log((start[0] - finish[0]) * 1000, (finish[1] - start[1]) * 1000);
-      async function move(roadId, latlngsStart, latlngsFinish, carInNum, carOutNum, opecity) {
-        let nowLatngs = [parseFloat(latlngsStart[0]), parseFloat(latlngsStart[1])];
-        let nowOpecity = opecity;
-        const circle = circlesArr[parseInt(roadId)]
-        if (!circle) return;
-        await circle.setLatLng(latlngsStart);
-        await circle.setStyle({
-          stroke: false,
-          fillColor: getColor(carInNum),
-          fillOpacity: opecity,
-          radius: circle_config.radius,
-        });
-        const moveStep = circle_config.moveStep;
-        animation();
-        async function animation(e) {
-          nowLatngs[0] += (parseFloat(latlngsFinish[0]) - parseFloat(latlngsStart[0])) / moveStep;
-          nowLatngs[1] += (parseFloat(latlngsFinish[1]) - parseFloat(latlngsStart[1])) / moveStep;
-          if ((Math.abs((start[0] - finish[0])) * 100 + Math.abs((finish[1] - start[1])) * 100) / 2 < 0.2) {
-            nowOpecity -= 0.8 / moveStep;
-          }
-          else if ((Math.abs((start[0] - finish[0])) * 100 + Math.abs((finish[1] - start[1])) * 100) / 2 > 1) {
-            nowOpecity += 0.8 / moveStep;
-          }
-          await circle.setLatLng([nowLatngs[0].toString(), nowLatngs[1].toString()]);
-          await circle.setStyle({ fillOpacity: nowOpecity });
-          if (nowLatngs[0] - parseFloat(latlngsFinish[0]) < 0.00000001 && nowLatngs[1] - parseFloat(latlngsFinish[1]) < 0.00000001) {
-            await circle.setStyle({ fillOpacity: 0, fillColor: getColor(carOutNum), });
-            time++;
-            if (time < 287) {
-              move(roadId, latlngsStart, latlngsFinish, item[time]['car_flow_in'], item[time]['car_flow_out'], circle_config.startOpacity);
-            }
-          }
-          else {
-            requestAnimationFrame(animation);
-          }
-        }
+    const COLOR_LEVEL = {
+      1: 'rgb(97, 134, 80)',
+      2: 'rgb(199, 216, 88)',
+      3: 'rgb(253, 216, 5)',
+      4: 'rgb(238, 152, 0)',
+      5: 'rgb(168, 0, 30)',
+    }
+    function getColor(levelNUm) {
+      if (levelNUm < 10) {
+        return COLOR_LEVEL[1];
+      }
+      else if (levelNUm < 20) {
+        return COLOR_LEVEL[2]
+      }
+      else if (levelNUm < 30) {
+        return COLOR_LEVEL[3]
+      }
+      else if (levelNUm < 40) {
+        return COLOR_LEVEL[4]
+      }
+      else {
+        return COLOR_LEVEL[5]
       }
     }
- 
-    function showDate(){
-      // setInterval(()=>{
-      //   console.log(1);
-      // },100)
+
+    var myChart = echarts.init(document.getElementById('main'), 'dark');
+
+    function getZoom() {
+      return LEAFLET_CONFIG.zoom;
     }
- </script>
+
+    setOptions()
+
+    async function setOptions() {
+      await getTracks();
+      getDotsLat()
+      nowOption = {
+        title: {
+          text: '车流量动态概念图',
+          left: 'center',
+          textStyle: {
+            color: '#fff'
+          }
+        },
+        tooltip: {
+          trigger: 'item'
+        },
+        leaflet: {
+          center: LEAFLET_CONFIG.center,
+          zoom: LEAFLET_CONFIG.zoom,
+          roam: false,
+          inertia: true,
+          layerControl: {
+            position: 'topright',
+          },
+          tiles: [{
+            label: 'Open Street Map',
+            urlTemplate: 'https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png',
+            options: {
+              attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>, Tiles courtesy of <a href="http://hot.openstreetmap.org/" target="_blank">Humanitarian OpenStreetMap Team</a>',
+            },
+          }],
+        },
+        series: [
+          {
+            type: 'lines',
+            coordinateSystem: 'leaflet',
+            polyline: true,
+            data: linesLat,
+            polyline: true,
+            lineStyle: {
+              color: function (e) {
+                const da = getRoadinfo(dotToRoadId.get(e.data[0].toString()), nowTime)
+                return getColor(da['car_flow_in']);
+              },
+              opacity: 0.4,
+              width: 1
+            },
+            //渐进式渲染
+            progressiveThreshold: 500,
+            progressive: 250
+          },
+          {
+            type: 'lines',
+            coordinateSystem: 'leaflet',
+            polyline: true,
+            data: linesLat,
+            lineStyle: {
+              width: 0,
+              color: function (e) {
+                const da = getRoadinfo(dotToRoadId.get(e.data[0].toString()), nowTime)
+                return getColor(da['car_flow_in']);
+              },
+            },
+            effect: {
+              period: timeSpeed * 5 / 1000,
+              show: true,
+              symbol: 'circle',
+              trailLength: 0.3,
+              symbolSize: 2.5,
+              large: true,
+            },
+            zlevel: 1,
+          },
+          // {
+          //   name: '路段',
+          //   type: 'scatter',
+          //   coordinateSystem: 'leaflet',
+          //   data: dotsLat,
+          //   symbolSize: DOT_CONFIG.symbolSize,
+          //   label: {
+          //     normal: {
+          //       formatter: '{b}',
+          //       position: 'right',
+          //       show: false
+          //     },
+          //     emphasis: {
+          //       show: true
+          //     }
+          //   },
+          //   itemStyle: {
+          //     normal: {
+          //       color: DOT_CONFIG.color
+          //     }
+          //   }
+          // },
+        ]
+      };
+      myChart.setOption(nowOption);
+      document.querySelector(".leaflet-control-zoom").style.display = "none"
+      startInterval(timeSpeed);
+    }
+
+    function startInterval(speed) {
+      let i = 0;
+      const timeInter = setInterval(() => {
+        setTime(nowTime + i % 5);
+        i++;
+      }, speed)
+      const inter = setInterval(() => {
+        myChart.setOption(nowOption)
+        nowTime = nowTime + 5;
+        if (nowTime >= 1440) {
+          nowTime = 5;
+          nowDay++;
+          if (nowDay > 15) {
+            clearInterval(inter);
+          }
+        }
+        if (nowTime >= 1200) {
+          getDayNData(nowDay + 1);
+        }
+      }, speed * 5)
+
+      nowInterval.inter = inter;
+      nowInterval.timeInter = timeInter;
+    }
+
+    function setZoom(zoom) {
+      nowOption['leaflet'].zoom = zoom;
+      myChart.setOption(nowOption)
+    }
+
+    function setCenter(center) {
+      nowOption['leaflet'].center = center;
+      myChart.setOption(nowOption)
+    }
+
+    const timeShow = document.querySelector("#time")
+    function setTime(timeNum) {
+      timeShow.innerHTML = `day${nowDay} time:${Math.floor(timeNum / 60) < 1 ? '00' : (Math.floor(timeNum / 60) < 10 ? '0' + Math.floor(timeNum / 60) : Math.floor(timeNum / 60))}:${timeNum % 60 < 1 ? '00' : (timeNum % 60 < 10 ? '0' + timeNum % 60 : timeNum % 60)}`
+    }
+
+    const speedNavBar = document.querySelector("#speedInput");
+    speedNavBar.value = (250 - timeSpeed) / 2;
+    speedNavBar.addEventListener("change", (e) => {
+      timeSpeed = 250 - e.target.value * 2;
+      clearInterval(nowInterval.inter);
+      clearInterval(nowInterval.timeInter);
+      startInterval(timeSpeed)
+    })
+    speedNavBar.addEventListener('mousedown', (e) => {
+      e.stopPropagation();
+      e.stopImmediatePropagation()
+    })
+
+    // document.addEventListener('mousedown', (e1) => {
+    //   e1.stopPropagation();
+    //   e1.stopImmediatePropagation();
+    //   setCenter(LEAFLET_CONFIG.center)
+    //   function mouseUp(e3) {
+    //     let scaleOffset = 5000;
+    //     const offsetX = (e3.clientX - e1.clientX) / scaleOffset;
+    //     const offsetY = (e3.clientY - e1.clientY) / scaleOffset;
+    //     const newCenter = [LEAFLET_CONFIG.center[0] - offsetX, LEAFLET_CONFIG.center[1] + offsetY];
+    //     setCenter(newCenter);
+    //     document.removeEventListener('mouseup', mouseUp)
+    //   }
+    //   document.addEventListener('mouseup', mouseUp)
+    // })
+
+    window.addEventListener('touch', (e) => {
+      console.log(e);
+    })
+
+    const addBtn = document.querySelector("#add");
+    const minBtn = document.querySelector("#min");
+    addBtn.addEventListener("click", () => {
+      setZoom(++LEAFLET_CONFIG.zoom);
+    })
+    minBtn.addEventListener("click", () => {
+      setZoom(--LEAFLET_CONFIG.zoom);
+    })
+
+    function a() {
+      var throttle = function (type, name, obj) {
+        obj = obj || window;
+        var running = false;
+        var func = function () {
+          if (running) {
+            return;
+          }
+          running = true;
+          requestAnimationFrame(function () {
+            obj.dispatchEvent(new CustomEvent(name));
+            running = false;
+          });
+        };
+        obj.addEventListener(type, func);
+      };
+
+      /* init - you can init any event */
+      throttle("resize", "optimizedResize");
+    }
+    a();
+    // handle event
+    window.addEventListener("optimizedResize", function () {
+      myChart.resize({
+        width: 'auto',
+        height: 'auto'
+      });
+    });
+  </script>
+  <script>
+    const developerBox = document.querySelector("#developer");
+    const developerBtn = document.querySelector("#developerBtn")
+    let isDeveloperMode = false;
+    window.addEventListener('keydown', (e) => {
+      if (e.keyCode === 75) {
+        if (!isDeveloperMode) {
+          isDeveloperMode = true;
+          developerBox.style.transform = "translate(0,0)"
+          // alert("开发者模式启动！")
+        }
+      }
+      if (e.keyCode === 67) {
+        if (isDeveloperMode) {
+          isDeveloperMode = false;
+          developerBox.style.transform = "translate(100%,0)"
+          // alert("开发者模式关闭！")
+        }
+      }
+    })
+
+    developerBtn.addEventListener("click",async () => {
+      const day = document.querySelector("#developerday").value;
+      if(day>15){
+        return;
+      }
+      await getDayNData(day);
+      nowDay = day;
+    })
+  </script>
 </body>
 
 </html>
