@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>中医期末复习刷题</title>
+  <script src="./data.js"></script>
+  <style>
+    body,
+    html {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: start;
+      justify-content: start;
+    }
+
+    .container {
+      position: relative;
+      margin-top: 100px;
+      margin-left: 100px;
+      width: 800px;
+      min-height: 400px;
+      /* background-color: pink; */
+      display: flex;
+      flex-direction: column;
+      align-items: start;
+      justify-content: start;
+      /* border: 1px solid black; */
+      border-radius: 12px;
+      box-shadow: 1px 1px 8px 1px rgba(0, 0, 0, 0.2);
+    }
+
+    .container .title {
+      width: 80%;
+      margin-top: 40px;
+      margin-left: 40px;
+    }
+
+    .container .title .type {
+      font-size: 18px;
+    }
+
+    .container .title .type::after {
+      content: " ";
+    }
+
+    .container .choose {
+      margin-top: 30px;
+      margin-left: 60px;
+    }
+
+    .container .choose .chooses {
+      margin-bottom: 20px;
+    }
+
+    .container .choose textarea {
+      outline: none;
+      /* border: none; */
+      padding: 2px;
+      min-width: 100px;
+      margin-bottom: 20px;
+      max-width: 400px;
+    }
+
+    .container .answer {
+      display: none;
+      margin-top: 20px;
+      margin-left: 60px;
+      margin-right: 60px;
+      margin-bottom: 80px;
+    }
+
+    .container #ok,
+    .container #incorrect {
+      position: absolute;
+      bottom: 40px;
+      right: 80px;
+      border: none;
+      overflow: none;
+      width: 120px;
+      height: 40px;
+      color: white;
+      background-color: rgb(88, 235, 88);
+      transition: all linear 0.2s;
+    }
+
+    .container #ok:hover,
+    .container #incorrect:hover {
+      transform: scale(1.02);
+      font-size: 16px;
+    }
+
+    .container #incorrect {
+      top: 0;
+      right: 0;
+      border-radius: 0 12px 0 8px;
+      background-color: rgb(25, 131, 231);
+      font-size: 14px;
+    }
+
+    #checkError {
+      position: fixed;
+      top: 60px;
+      right: 80px;
+      border: none;
+      overflow: none;
+      padding: 10px 20px;
+      color: white;
+      background-color: rgb(25, 131, 231);
+      transition: all linear 0.2s;
+    }
+
+    #checkError:hover {
+      transform: scale(1.02);
+    }
+
+    #errorBox {
+      position: fixed;
+      top: 110px;
+      right: 80px;
+      width: 400px;
+      height: 600px;
+      border-radius: 12px;
+      box-shadow: 1px 1px 8px 1px rgba(0, 0, 0, 0.2);
+      transition: all linear 0.2s;
+      background-color: rgb(230, 225, 225);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: start;
+      padding-top: 20px;
+      overflow: auto;
+      transform: scale(0);
+    }
+
+    #errorBox .card {
+      width: 80%;
+      /* min-height: 200px; */
+      border-radius: 12px;
+      box-shadow: 1px 1px 8px 1px rgba(0, 0, 0, 0.2);
+      background-color: antiquewhite;
+      margin-bottom: 20px;
+      color: rgb(19, 20, 21);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    #errorBox .card .title {
+      width: 80%;
+      margin-top: 10px;
+      margin-bottom: 10px;
+    }
+
+    #errorBox .card .chooses {
+      width: 80%;
+      margin-top: 10px;
+      margin-bottom: 10px;
+    }
+
+    #errorBox .card .answer {
+      width: 80%;
+      margin-top: 10px;
+      margin-bottom: 20px;
+    }
+
+    #help {
+      position: fixed;
+      top: 10px;
+      left: 10px;
+      width: 50px;
+      height: 50px;
+      border: none;
+      overflow: none;
+      background-color: white;
+      color: rgba(0, 0, 0, 0.7);
+      border: 0.6px solid rgba(0, 0, 0, 0.1);
+      /* box-shadow: 0px 0px 4px 1px inset rgba(0, 0, 0, 0.1); */
+      border-radius: 8px;
+    }
+
+    #help:hover {
+      background-color: rgba(0, 0, 0, 0.05);
+    }
+
+    #helpbox{
+      position: fixed;
+      z-index: 20;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%,-50%);
+      width: 100%;
+      height: 100vh;
+      background-color: pink;
+      display: none;
+      color: black;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+    <div class="title"><span class="type" id="type">单选题</span><span id="title"> 1．中医学理论体系形成的时期是</span></div>
+
+    <div class="choose">
+      <div class="chooses" id="chooses">
+      </div>
+      <textarea placeholder="请输入你的答案" name="" id="myAnswer" cols="30" rows="5"></textarea>
+    </div>
+    <div class="answer" id="answer">[答案]A</div>
+    <button id="ok">提交</button>
+    <button id="incorrect">放入错题</button>
+  </div>
+  <button id="checkError">查看错题</button>
+  <div id="errorBox">
+  </div>
+  <button id="help">帮助</button>
+  <div id="helpbox">
+    <span style="color: red;">双击可关闭该帮助！</span>
+    <p>这是一个灰场简陋的帮助！</p>
+    <p>显然马上要期末了，我根本没时间优化了。。。</p>
+    <p>目前版本 1.0.0</p>
+    <p>点击 提交 后会显示答案</p>
+    <p>点击 下一题 显示下一题</p>
+    <p style="color: red;">请尽量不要切换浏览器，因为你的错题会保存在浏览器中！</p>
+  </div>
+  <script>
+    const problemType = {
+      1: "单项选择题",
+      2: "多项选择题",
+      3: "填空题",
+      4: "名词解释",
+      5: "问答题",
+      6: "分析题",
+    }
+
+    function createRanNum(min, max) {
+      return Math.floor(min + Math.random() * (max - min + 1));
+    }
+
+    const answer = document.querySelector("#answer");
+    const titleText = document.querySelector("#title");
+    const typeText = document.querySelector("#type");
+    const chooses = document.querySelector("#chooses");
+    let problem;
+    function createProblem() {
+      const id = createRanNum(0, data.length - 1);
+      problem = data[id];
+      problem.id = id;
+      titleText.textContent = problem.title;
+      typeText.textContent = problemType[problem.type];
+      chooses.innerHTML = ""
+      problem.chooses.map(e => {
+        const p = document.createElement("p");
+        p.textContent = e;
+        chooses.appendChild(p);
+      })
+      answer.textContent = problem.answer;
+      console.log(problem);
+      return id;
+    }
+    createProblem()
+
+    const okBtn = document.querySelector("#ok");
+    let flag = true;
+    okBtn.addEventListener("click", () => {
+      if (flag) {
+        answer.style.display = "block";
+        okBtn.textContent = "下一题"
+        flag = false;
+      }
+      else {
+        answer.style.display = "none";
+        okBtn.textContent = "提交"
+        flag = true;
+        createProblem();
+      }
+    })
+
+    const incorrectBtn = document.querySelector("#incorrect");
+    incorrectBtn.addEventListener("click", () => {
+      let map = JSON.parse(localStorage.getItem("zyqmfxctb"));//中医期末复习错题本
+      // console.log(problem, map);
+      if (map == null) {
+        map = {};
+      }
+      map[problem.id] = problem;
+      localStorage.setItem("zyqmfxctb", JSON.stringify(map));
+    })
+
+    const checkErrorBtn = document.querySelector("#checkError");
+    const errorBox = document.querySelector("#errorBox");
+    let show = false;
+    checkErrorBtn.addEventListener("click", () => {
+      if (!show) {
+        errorBox.style.transform = "scale(1)";
+        show = true;
+      }
+      else {
+        errorBox.style.transform = "scale(0)";
+        show = false;
+      }
+      errorBox.innerHTML = '';
+      let map = JSON.parse(localStorage.getItem("zyqmfxctb"));//中医期末复习错题本
+      for (const key in map) {
+        if (Object.hasOwnProperty.call(map, key)) {
+          const element = map[key];
+          let chooses = "";
+          element.chooses.map(e => {
+            chooses += e;
+          })
+          const cardHtml = `
+      <div class="title">${element.title}</div>
+      <div class="chooses">
+        ${chooses}
+      </div>
+      <div class="answer">${element.answer}</div>
+    `
+          const div = document.createElement("div");
+          div.classList = "card";
+          div.innerHTML = cardHtml;
+          errorBox.appendChild(div)
+        }
+      }
+
+    })
+
+    const helpBtn = document.querySelector("#help");
+    const helpBox = document.querySelector("#helpbox");
+    helpBtn.addEventListener("click", () => {
+      helpBox.style.display = "block";
+    })
+
+    helpBox.addEventListener("dblclick",()=>{
+      helpBox.style.display = "none";
+    })
+  </script>
+</body>
+
+</html>
