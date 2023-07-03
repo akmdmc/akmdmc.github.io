@@ -15,16 +15,16 @@
             box-sizing: border-box;
             background: url(./img/1.jpg) no-repeat center center;
         }
-        
+
         li {
             list-style: none;
         }
-        
+
         a {
             text-decoration: none;
             color: black;
         }
-        
+
         h1 {
             margin: 0;
             padding: 20px 0 20px 40px;
@@ -33,13 +33,13 @@
             font-size: 28px;
             color: #cfd8dc;
         }
-        
+
         ul {
             display: flex;
             padding: 0;
             margin: 0;
         }
-        
+
         .choice>li {
             flex: 1;
             position: relative;
@@ -51,14 +51,15 @@
             font-size: 20px;
             background-color: #90a4ae;
         }
+
         /* .choice>li:hover {
             background-color: #455a64;
         } */
-        
+
         .choice>li:hover .choice-inner li {
             opacity: 1;
         }
-        
+
         .choice-inner {
             padding: 0;
             margin: 0;
@@ -71,7 +72,7 @@
             justify-content: center;
             flex-direction: column;
         }
-        
+
         .choice-inner li {
             opacity: 0;
             transition: all 1s;
@@ -81,7 +82,7 @@
             height: 60px;
             background-color: rgba(84, 110, 122, .7);
         }
-        
+
         .choice-inner li:hover {
             background-color: #90a4ae;
         }
@@ -120,7 +121,7 @@
                 <li>
                     <a href="./电脑/zjl/index.html">周俊灵</a>
                 </li>
-                <li></li>
+                <li><a href="./电脑/医院管理/index.html">短学期</a></li>
                 <li></li>
             </ol>
         </li>
@@ -128,7 +129,7 @@
     <script>
         let boxs = document.querySelectorAll('.box')
         for (let i = 0; i < boxs.length; i++) {
-            boxs[i].addEventListener('click', function() {
+            boxs[i].addEventListener('click', function () {
                 for (let k = 0; k < boxs.length; k++) {
                     for (let t = 0; t < boxs[k].children[0].children.length; t++) {
                         boxs[k].children[0].children[t].style.opacity = 0
