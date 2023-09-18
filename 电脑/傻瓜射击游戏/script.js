@@ -31,8 +31,7 @@ class Raven {
         this.directionY = Math.random() * 5 - 2.5;
         this.markedForDeletion = false;
         //动画精灵表
-        this.image = new Image();
-        this.image.src = './小狗多种动作.png';
+        this.image = document.getElementById('raven');
         this.frame = 0;
         this.timeSinceFlap = 0;
         this.flapInterval = 100 * (this.directionX / 8); // 小狗动作的快慢
@@ -72,13 +71,11 @@ class Explosion {
         this.height = this.size;
         this.x = x;
         this.y = y;
-        this.image = new Image();
-        this.image.src = './爆炸.png';
+        this.image = document.getElementById('explosion');
         this.frame = 0;
         this.timeSinceLastFrame = 0;
         this.frameInterval = 200;
-        this.sound = new Audio();
-        this.sound.src = './小小杰丶 - 你干嘛~哎哟.mp3';
+        this.sound = document.getElementById('explosionSound');
         this.markedForDeletion = false;
     }
     async updated(deltatime) {
