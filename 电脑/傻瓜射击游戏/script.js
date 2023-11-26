@@ -160,6 +160,4 @@ function animate(timeStamp) {
     }
 }
 
-setTimeout(function() {
-    animate(0);
-}, 2000)
+animate(0);
