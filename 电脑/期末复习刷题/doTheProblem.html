@@ -33,17 +33,23 @@
 
   <button id="help">帮助</button>
   <div id="helpbox">
-    <span style="color: red;">双击可关闭该帮助！</span>
+    <span style="color: rgb(225, 66, 66);">双击可关闭该帮助！</span>
+    <p style="color: rgb(218, 74, 74);">请尽量不要切换浏览器，因为你的错题会保存在浏览器中！</p>
+    <p style="color: rgb(215, 122, 55);">目前版本 1.0.2</p>
     <p>这是一个灰场简陋的帮助！</p>
     <p>显然马上要期末了，我根本没时间优化了。。。</p>
-    <p>目前版本 1.0.0</p>
+    <br>
+    <p>版本 1.0.0</p>
     <p>点击 提交 后会显示答案</p>
     <p>点击 下一题 显示下一题</p>
-    <p style="color: red;">请尽量不要切换浏览器，因为你的错题会保存在浏览器中！</p>
     <br>
-    <p>目前版本 1.0.1</p>
+    <p>版本 1.0.1</p>
     <p>新增切换错题功能，同时新增了一个错题库，最新错题库为1</p>
     <p>新增消息提示框和版本检查提示功能。</p>
+    <br>
+    <p>版本 1.0.1</p>
+    <p>新增毛概的题库啦！</p>
+    <br>
   </div>
 
   <div id="messageBox" class="messageBox"></div>
@@ -57,12 +63,22 @@
       6: "分析题",
     }
 
+    const problemLibraryName = [
+      "中基题库整合版",
+      "2023版《概论》第一章",
+      "2023版《概论》第二章",
+      "2023版《概论》第四章",
+      "2023版《概论》第五章",
+      "2023版《概论》第六章",
+      "2023版《概论》第七章",
+    ]
+
     //生成随机数
     function createRanNum(min, max) {
       return Math.floor(min + Math.random() * (max - min + 1));
     }
 
-    const version = "1.0.1";
+    const version = "1.0.2";
     const answer = document.querySelector("#answer");
     const titleText = document.querySelector("#title");
     const typeText = document.querySelector("#type");
@@ -72,16 +88,15 @@
     const problemLibrary = document.querySelector("#problemLibraryID")
     const changeLibraryButton = document.querySelector(".changeLibraryButton");
     let problem;
-    const problemLibraryIDs = [0, 1]; //题目库ID
-    let problemLibraryID = 1; //题目库ID
+    let problemLibraryID = 0; //题目库ID
 
     //切换题库ID
     function changeProblemLibraryID() {
-      if (problemLibraryIDs.find((e) => (e === problemLibraryID + 1))) {
-        problemLibraryID += 1;
+      if (problemLibraryID + 1 < data.length) {
+        problemLibraryID++;
       }
       else {
-        problemLibraryID = problemLibraryIDs[0];
+        problemLibraryID = 0;
       }
     }
 
@@ -91,14 +106,16 @@
       problem = data[problemLibraryID][id];
       problem.id = id;
       titleText.textContent = problem.title;
-      problemLibrary.textContent = `题库${problemLibraryID}：`;
+      problemLibrary.textContent = `${problemLibraryName[problemLibraryID]}：`;
       typeText.textContent = problemType[problem.type];
       chooses.innerHTML = ""
-      problem.chooses.map(e => {
-        const p = document.createElement("p");
-        p.textContent = e;
-        chooses.appendChild(p);
-      })
+      if (problem?.chooses) {
+        problem.chooses.map(e => {
+          const p = document.createElement("p");
+          p.textContent = e;
+          chooses.appendChild(p);
+        })
+      }
       answer.textContent = problem.answer;
       console.log(problem);
       return id;
