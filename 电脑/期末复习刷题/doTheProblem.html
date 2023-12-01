@@ -20,7 +20,7 @@
     <div class="choose">
       <div class="chooses" id="chooses">
       </div>
-      <textarea placeholder="请输入你的答案" name="" id="myAnswer" cols="30" rows="5"></textarea>
+      <textarea placeholder="请输入你的答案" style="width: 70%;" name="" id="myAnswer" cols="30" rows="5"></textarea>
     </div>
     <div class="answer" id="answer">[答案]A</div>
     <button id="ok">提交</button>
@@ -33,9 +33,9 @@
 
   <button id="help">帮助</button>
   <div id="helpbox">
-    <span style="color: rgb(225, 66, 66);">双击可关闭该帮助！</span>
+    <button class="closeBtn" id="closeHelpBoxBtn">x</button>
     <p style="color: rgb(218, 74, 74);">请尽量不要切换浏览器，因为你的错题会保存在浏览器中！</p>
-    <p style="color: rgb(215, 122, 55);">目前版本 1.0.2</p>
+    <p style="color: rgb(215, 122, 55);">目前版本 1.0.3</p>
     <p>这是一个灰场简陋的帮助！</p>
     <p>显然马上要期末了，我根本没时间优化了。。。</p>
     <br>
@@ -47,12 +47,17 @@
     <p>新增切换错题功能，同时新增了一个错题库，最新错题库为1</p>
     <p>新增消息提示框和版本检查提示功能。</p>
     <br>
-    <p>版本 1.0.1</p>
+    <p>版本 1.0.2</p>
     <p>新增毛概的题库啦！</p>
+    <br>
+    <p>版本 1.0.3</p>
+    <p>移动端优化啦</p>
     <br>
   </div>
 
   <div id="messageBox" class="messageBox"></div>
+
+  <div id="masking"></div>
   <script>
     const problemType = {
       1: "单项选择题",
@@ -78,7 +83,8 @@
       return Math.floor(min + Math.random() * (max - min + 1));
     }
 
-    const version = "1.0.2";
+    const version = "1.0.3";
+    const versionMessage = "移动端优化！";
     const answer = document.querySelector("#answer");
     const titleText = document.querySelector("#title");
     const typeText = document.querySelector("#type");
@@ -87,6 +93,7 @@
     const helpBox = document.querySelector("#helpbox");
     const problemLibrary = document.querySelector("#problemLibraryID")
     const changeLibraryButton = document.querySelector(".changeLibraryButton");
+    const masking = document.querySelector("#masking");
     let problem;
     let problemLibraryID = 0; //题目库ID
 
@@ -120,8 +127,6 @@
       console.log(problem);
       return id;
     }
-
-    createProblem()
 
     //切换题库
     changeLibraryButton.addEventListener("click", () => {
@@ -198,14 +203,29 @@
     })
 
     //帮助按钮
-    helpBtn.addEventListener("click", () => {
+    function showHelpBox() {
       helpBox.style.display = "block";
-    })
+      maskingShow();
+    }
+    helpBtn.addEventListener("click", showHelpBox)
+    function closeHelpBox() {
+      helpBox.style.display = "none";
+      maskingHide();
+    }
 
     //帮助框双击关闭
-    helpBox.addEventListener("dblclick", () => {
-      helpBox.style.display = "none";
-    })
+    helpBox.addEventListener("dblclick", closeHelpBox)
+    //关闭按钮
+    document.querySelector("#closeHelpBoxBtn").addEventListener("click", closeHelpBox)
+
+    //遮罩层
+    function maskingShow() {
+      masking.style.display = "block";
+    }
+
+    function maskingHide() {
+      masking.style.display = "none";
+    }
 
     //消息提示
     const messageBox = document.querySelector("#messageBox");
@@ -221,19 +241,24 @@
         messageBox.classList.add("success");
       }
       messageBox.textContent = content;
-      messageBox.style.transform = "scale(1)";
+      messageBox.style.transform = "translate(-50%, 0) scale(1)";
       setTimeout(() => {
-        messageBox.style.transform = "scale(0)";
+        messageBox.style.transform = "translate(-50%, 0) scale(0)";
       }, 2000);
     }
 
     function checkVersion() {
       const localVersion = localStorage.getItem("zyqmfxctb-version");
       if (localVersion !== version) {
-        message("版本更新啦！可以查看帮助获取最新消息！", "info");
+        message("版本更新啦！新增内容：" + versionMessage, "info");
         localStorage.setItem("zyqmfxctb-version", version);
       }
+      else {
+        message("欢迎使用中医期末复习刷题！");
+      }
     }
+
+    createProblem();
     checkVersion();
   </script>
 </body>
