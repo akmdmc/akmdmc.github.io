@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <div>
+    <div>
+      <label for="name">name(名字):</label>
+      <input type="text" id="name" value="name">
+    </div>
+    <!-- <div>
+      <label for="namePrefix">名字前缀(蓝牙过滤条件之前缀):</label>
+      <input type="text" id="namePrefix" value="battery_service">
+    </div> -->
+    <!-- <div>
+      <label for="namserviceePrefix">service(蓝牙过滤条件之service):</label>
+      <input type="text" id="service" value="">
+    </div> -->
+    <div>
+      <label for="PrimaryService">PrimaryService(服务的UUID):</label>
+      <input type="text" id="PrimaryService" value="0xFFF0">
+    </div>
+    <div>
+      <label for="characteristic">characteristic(特性的UUID):</label>
+      <input type="text" id="characteristic" value="0xFFF0">
+    </div>
+  </div>
+  <button class="btns">连接蓝牙</button>
+  <script>
+    const bluetoothObjet = {
+      battery: {
+        service: ['battery_service'],
+        PrimaryService: 'battery_service',
+        characteristic: 'battery_level'
+      },
+      as: {
+        service: [],
+        optionalServices: [],
+        PrimaryService: '0xFFF2',
+        characteristic: '0xFFF1'
+      }
+    }
+    let nowWatchObj = bluetoothObjet.battery
+
+    var bluetoothDevice;
+    let btn = document.querySelector('.btns')
+    btn.addEventListener('click', getBlueObject)
+    // 获取蓝牙对象
+    async function getBlueObject() {
+      // const service = document.getElementById('service').value
+      // const namePrefix = document.getElementById('namePrefix').value
+      const name = document.getElementById('name').value
+      const PrimaryService = document.getElementById('PrimaryService').value
+      const characteristic = document.getElementById('characteristic').value
+      console.log(PrimaryService, characteristic);
+      nowWatchObj = {
+        PrimaryService: PrimaryService,
+        characteristic: characteristic
+      }
+      bluetoothDevice = null;
+      // 这一块的筛选条件在 推荐的网站1里面可以粗略的学习到
+      await navigator.bluetooth.requestDevice({
+        filters: [{
+          // services: nowWatchObj.service,
+          // 如果你使用的  acceptAllDevices: true,  这个筛选条件,当你要连接 服务 和 特征 的时候,就必须添加一个 optionalServices 把你的服务的uuid 和 特征的uuid 写进入
+          // namePrefix: nowWatchObj.namePrefix,
+          // namePrefix: 'a'
+          // services: [nowWatchObj.PrimaryService],
+          name: name
+
+
+        }],
+        // optionalServices: nowWatchObj?.optionalServices
+      }).then(device => {
+        bluetoothDevice = device
+        console.log('获取蓝牙成功', device);
+        // 监听蓝牙蓝牙断开
+        bluetoothDevice.addEventListener('gattserverdisconnected', onDisconnected)
+        connect()
+      }).catch(err => {
+        alert('获取蓝牙失败')
+        console.log('获取蓝牙失败', err);
+      })
+    }
+    // 开始连接
+    function connect() {
+      exponentialBackoff(3 /* 最大重试次数 */, 2 /* 秒延迟 */,
+        function toTry() {
+          return bluetoothDevice.gatt.connect();
+        },
+        function success(server) {
+          getServer(server)
+        },
+        function fail() {
+          alert('连接失败')
+          console.log('连接失败');
+        });
+    }
+    // 获取服务\特征,监听蓝牙数据返回
+    function getServer(server) {
+      alert('连接成功')
+      console.log('连接成功', server);
+
+      server.getPrimaryService(nowWatchObj.PrimaryService).then(service => {
+        console.log('获取全部服务信息成功,开始获取特征信息', service)
+        return service.getCharacteristic(nowWatchObj.characteristic)
+      }).then(characteristic => {
+        return characteristic.startNotifications().then(_ => {
+          characteristic.addEventListener('characteristicvaluechanged',
+            handleNotifications);
+        });
+      }).catch(err => {
+        alert('获取服务失败', err)
+        console.log('获取服务失败', err);
+      })
+    }
+    function onDisconnected(max, delay, status) {
+      console.log('重连中');
+      connect()
+    }
+    function exponentialBackoff(max, delay, toTry, success, fail) {
+      toTry().then(result => success(result))
+        .catch(_ => {
+          if (max === 0) {
+            return fail();
+          }
+          setTimeout(function () {
+            exponentialBackoff(--max, delay * 2, toTry, success, fail);
+          }, delay * 1000);
+        });
+    }
+    function handleNotifications(event) {
+      let value = event.target.value;
+      let a = [];
+      for (let i = 0; i < value.byteLength; i++) {
+        a.push('0x' + ('00' + value.getUint8(i).toString(16)).slice(-2));
+      }
+      console.log('> ' + a.join(' '));
+    }
+
+  </script>
+</body>
+
+</html>
