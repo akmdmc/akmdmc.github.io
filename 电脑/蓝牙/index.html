@@ -10,98 +10,102 @@
 
 <body>
   <div>
+    <h4>version:1.0.3</h4>
+    <p style="color: red;">此版本可以配对所有蓝牙，自己慢慢找把(记得修改uuid)</p>
+    <!-- <p style="color: red;">测试按钮默认关闭，此按钮为开发人员的测试按钮，与蓝牙无关，即————<strong>别点</strong></p> -->
     <div>
-      <label for="name">name(名字):</label>
-      <input type="text" id="name" value="name">
+      <!-- <h4>filter 选项 (<span id="filterModeTag">打开</span>中。。。)（可以只填部分,但至少填一个）：</h4>
+      <div id="filter-container">
+        <div>
+          <label for="name">name(名字):</label>
+          <input type="text" id="name" value="@2308002499">
+        </div>
+        <div>
+          <label for="namePrefix">名字前缀(蓝牙过滤条件之前缀):</label>
+          <input type="text" id="namePrefix" value="">
+        </div>
+        <div>
+          <label for="services">services(蓝牙过滤条件之services, <span style="color: red;">不知道别填</span>):</label>
+          <input type="text" id="services" value="">
+        </div>
+      </div>
+      <br>
+      <strong>/或者</strong>
+      <button class="btn" id="acceptAllDevices">接受所有蓝牙（filter失效，蓝牙自己找）</button> -->
+      <div id="uuid-conteainer">
+        <h4>uuid:</h4>
+        <div>
+          <label for="PrimaryService">PrimaryService(服务的UUID):</label>
+          <input type="text" id="PrimaryService" value="0xFFF0">
+        </div>
+        <div>
+          <label for="characteristic">characteristic(特性的UUID):</label>
+          <input type="text" id="characteristic" value="0xFFF2">
+        </div>
+      </div>
     </div>
-    <!-- <div>
-      <label for="namePrefix">名字前缀(蓝牙过滤条件之前缀):</label>
-      <input type="text" id="namePrefix" value="battery_service">
-    </div> -->
+    <button class="btn" id="connectBlueTooth">连接蓝牙</button>
+    <!-- <button class="btn" id="testBtn">测试(关闭)</button> -->
     <div>
-      <label for="services">services(蓝牙过滤条件之services):</label>
-      <input type="text" id="services" value="">
-    </div>
-    <div>
-      <label for="PrimaryService">PrimaryService(服务的UUID):</label>
-      <input type="text" id="PrimaryService" value="0xFFF0">
-    </div>
-    <div>
-      <label for="characteristic">characteristic(特性的UUID):</label>
-      <input type="text" id="characteristic" value="0xFFF2">
+      <h2>操作记录</h2>
+      <section id="operationHistory"></section>
     </div>
   </div>
-  <button class="btns">连接蓝牙</button>
-  <div>
-    <h2>操作记录</h2>
-    <section id="operationHistory"></section>
-  </div>
+
+  <!-- 蓝牙连接 -->
   <script>
-    const isTest = false;
     let historyTime = 0;
-
-    const bluetoothObjet = {
-      battery: {
-        services: ['battery_service'],
-        PrimaryService: 'battery_service',
-        characteristic: 'battery_level'
-      },
-      as: {
-        services: [],
-        optionalServices: [],
-        PrimaryService: '0xFFF2',
-        characteristic: '0xFFF1'
-      }
+    let nowUUid = {
+      PrimaryService: '',
+      characteristic: ''
     }
-    let nowWatchObj = bluetoothObjet.battery
-
+    const blueToothOptions = {
+      // filters: {},
+      acceptAllDevices: false,
+    }
     var bluetoothDevice;
-    let btn = document.querySelector('.btns')
+    let btn = document.getElementById('connectBlueTooth')
     btn.addEventListener('click', getBlueObject)
     // 获取蓝牙对象
     async function getBlueObject() {
       // const service = document.getElementById('service').value
       // const namePrefix = document.getElementById('namePrefix').value
-      const name = document.getElementById('name').value
-      const services = isTest ? nowWatchObj.services : [document.getElementById('services').value]
-      const PrimaryService = isTest ? nowWatchObj.PrimaryService : document.getElementById('PrimaryService').value
-      const characteristic = isTest ? nowWatchObj.characteristic : document.getElementById('characteristic').value
-      // console.log(PrimaryService, characteristic);
+      // const name = document.getElementById('name').value
+      // const services = [document.getElementById('services').value]
+      nowUUid.PrimaryService = document.getElementById('PrimaryService').value
+      nowUUid.characteristic = document.getElementById('characteristic').value
       historyTime++
       addOperationHistory('-------------------' + historyTime + '-------------------')
       addOperationHistory('开始获取蓝牙');
-      await addOperationHistory('PrimaryService:', PrimaryService)
-      await addOperationHistory('characteristic:', characteristic)
-      // if (!isTest) {
-      //   nowWatchObj = {
-      //     ...nowWatchObj,
-      //     PrimaryService: PrimaryService,
-      //     characteristic: characteristic
-      //   }
-      // }
+      addOperationHistory('PrimaryService:', nowUUid.PrimaryService)
+      addOperationHistory('characteristic:', nowUUid.characteristic)
       bluetoothDevice = null;
-      const filters = [{
-        // 如果你使用的  acceptAllDevices: true,  这个筛选条件,当你要连接 服务 和 特征 的时候,就必须添加一个 optionalServices 把你的服务的uuid 和 特征的uuid 写进入
-        // namePrefix: nowWatchObj.namePrefix,
-        // namePrefix: 'a'
-        services: services,
-        name: name
-      }]
-      if (isTest) {
-        delete filters[0].name
-      }
-      // console.log('filters:', filters);
-      addOperationHistory('filters:', JSON.stringify(filters))
+      // const filters = [{
+      //   // 如果你使用的  acceptAllDevices: true,  这个筛选条件,当你要连接 服务 和 特征 的时候,就必须添加一个 optionalServices 把你的服务的uuid 和 特征的uuid 写进入
+      //   namePrefix: namePrefix,
+      //   services: services,
+      //   name: name
+      // }]
+      // if (!name) {
+      //   delete filters[0].name
+      // }
+      // if (!services[0]) {
+      //   delete filters[0].services
+      // }
+      // if (!namePrefix) {
+      //   delete filters[0].namePrefix
+      // }
+      // blueToothOptions.filters = {}
+      blueToothOptions.acceptAllDevices = true
+
+      addOperationHistory('blueToothOptions', JSON.stringify(blueToothOptions))
 
       // 这一块的筛选条件在 推荐的网站1里面可以粗略的学习到
-      await navigator.bluetooth.requestDevice({
-        filters: filters,
-        // optionalServices: nowWatchObj?.optionalServices
-      }).then(device => {
+      await navigator.bluetooth.requestDevice(blueToothOptions).then(device => {
         bluetoothDevice = device
         // console.log('获取蓝牙成功', device);
         addOperationHistory('获取蓝牙成功')
-        addOperationHistory('name:', device.name)
+        addOperationHistory('device:', JSON.stringify(device))
         // 监听蓝牙蓝牙断开
         bluetoothDevice.addEventListener('gattserverdisconnected', onDisconnected)
         connect()
@@ -134,11 +138,12 @@
       addOperationHistory('连接成功')
       addOperationHistory('开始获取服务信息')
 
-      server.getPrimaryService(nowWatchObj.PrimaryService).then(service => {
+      server.getPrimaryService(nowUUid.PrimaryService).then(service => {
         // console.log('获取全部服务信息成功,开始获取特征信息', service)
         addOperationHistory('获取全部服务信息成功,开始获取特征信息')
-        return service.getCharacteristic(nowWatchObj.characteristic)
+        return service.getCharacteristic(nowUUid.characteristic)
       }).then(characteristic => {
+        
         return characteristic.startNotifications().then(_ => {
           // console.log('获取特征信息成功,开始监听蓝牙数据返回', characteristic);
           addOperationHistory('获取特征信息成功,开始监听蓝牙数据返回')
@@ -148,7 +153,7 @@
       }).catch(err => {
         // alert('获取服务失败', err)
         // console.log('获取服务失败', err);
-        addOperationHistory('获取服务失败')
+        addOperationHistory('获取服务失败',JSON.stringify(err))
       })
     }
 
@@ -167,6 +172,7 @@
             return fail();
           }
           setTimeout(function () {
+            addOperationHistory('重连中', max)
             exponentialBackoff(--max, delay * 2, toTry, success, fail);
           }, delay * 1000);
         });
@@ -193,6 +199,50 @@
       operationHistoryBox.appendChild(p);
     }
 
+  </script>
+
+  <!-- filter开关 -->
+  <script>
+
+  </script>
+
+
+  <!-- 测试 -->
+  <script>
+    const TEST_KEY = 'testKey'
+    const testBtn = document.getElementById('testBtn')
+
+    const bluetoothObjet = {
+      battery: {
+        services: ['battery_service'],
+        PrimaryService: 'battery_service',
+        characteristic: 'battery_level'
+      },
+      as: {
+        services: [],
+        optionalServices: [],
+        PrimaryService: '0xFFF2',
+        characteristic: '0xFFF1'
+      }
+    }
+    let nowWatchObj = bluetoothObjet.battery
+
+    testBtn.addEventListener('click', () => {
+      // console.log('testBtn');
+      const isTestOpen = localStorage.getItem(TEST_KEY);
+      addOperationHistory('testBtn', isTestOpen)
+      if (isTestOpen == undefined || isTestOpen === '0') {
+        localStorage.setItem(TEST_KEY, '1');
+        testBtn.textContent = '测试(开启)'
+        addOperationHistory('测试模式开启')
+      } else {
+        localStorage.setItem(TEST_KEY, '0');
+        testBtn.textContent = '测试(关闭)'
+        addOperationHistory('测试模式关闭')
+      }
+    })
+    const isTest = localStorage.getItem('testKey') === '1'
+    testBtn.textContent = isTest ? '测试(开启)' : '测试(关闭)'
   </script>
 </body>
 
