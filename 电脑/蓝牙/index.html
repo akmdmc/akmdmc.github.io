@@ -28,7 +28,7 @@
     </div>
     <div>
       <label for="characteristic">characteristic(特性的UUID):</label>
-      <input type="text" id="characteristic" value="0xFFF0">
+      <input type="text" id="characteristic" value="0xFFF2">
     </div>
   </div>
   <button class="btns">连接蓝牙</button>
@@ -37,6 +37,7 @@
     <section id="operationHistory"></section>
   </div>
   <script>
+    const isTest = false;
     let historyTime = 0;
 
     const bluetoothObjet = {
@@ -142,11 +143,15 @@
         addOperationHistory('获取服务失败')
       })
     }
+    
+    // 监听蓝牙断开
     function onDisconnected(max, delay, status) {
       // console.log('重连中');
       addOperationHistory('重连中')
       connect()
     }
+    
+    // 重连
     function exponentialBackoff(max, delay, toTry, success, fail) {
       toTry().then(result => success(result))
         .catch(_ => {
@@ -158,6 +163,8 @@
           }, delay * 1000);
         });
     }
+    
+    // 监听蓝牙数据返回
     function handleNotifications(event) {
       let value = event.target.value;
       let a = [];
@@ -168,8 +175,10 @@
       addOperationHistory('> ' + a.join(' '))
     }
 
+    // 操作记录
     const operationHistoryBox = document.getElementById('operationHistory');
 
+    // 添加操作记录
     function addOperationHistory(text) {
       const p = document.createElement('p');
       p.innerText = text;
