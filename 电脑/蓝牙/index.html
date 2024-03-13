@@ -18,10 +18,10 @@
       <label for="namePrefix">名字前缀(蓝牙过滤条件之前缀):</label>
       <input type="text" id="namePrefix" value="battery_service">
     </div> -->
-    <!-- <div>
-      <label for="namserviceePrefix">service(蓝牙过滤条件之service):</label>
-      <input type="text" id="service" value="">
-    </div> -->
+    <div>
+      <label for="services">services(蓝牙过滤条件之services):</label>
+      <input type="text" id="services" value="">
+    </div>
     <div>
       <label for="PrimaryService">PrimaryService(服务的UUID):</label>
       <input type="text" id="PrimaryService" value="0xFFF0">
@@ -42,12 +42,12 @@
 
     const bluetoothObjet = {
       battery: {
-        service: ['battery_service'],
+        services: ['battery_service'],
         PrimaryService: 'battery_service',
         characteristic: 'battery_level'
       },
       as: {
-        service: [],
+        services: [],
         optionalServices: [],
         PrimaryService: '0xFFF2',
         characteristic: '0xFFF1'
@@ -63,37 +63,45 @@
       // const service = document.getElementById('service').value
       // const namePrefix = document.getElementById('namePrefix').value
       const name = document.getElementById('name').value
-      const PrimaryService = document.getElementById('PrimaryService').value
-      const characteristic = document.getElementById('characteristic').value
+      const services = isTest ? nowWatchObj.services : [document.getElementById('services').value]
+      const PrimaryService = isTest ? nowWatchObj.PrimaryService : document.getElementById('PrimaryService').value
+      const characteristic = isTest ? nowWatchObj.characteristic : document.getElementById('characteristic').value
       // console.log(PrimaryService, characteristic);
       historyTime++
-      addOperationHistory('-------------------'+historyTime+'-------------------')
+      addOperationHistory('-------------------' + historyTime + '-------------------')
       addOperationHistory('开始获取蓝牙');
-      addOperationHistory('PrimaryService:',PrimaryService)
-      addOperationHistory('characteristic:',characteristic)
-      nowWatchObj = {
-        PrimaryService: PrimaryService,
-        characteristic: characteristic
-      }
+      await addOperationHistory('PrimaryService:', PrimaryService)
+      await addOperationHistory('characteristic:', characteristic)
+      // if (!isTest) {
+      //   nowWatchObj = {
+      //     ...nowWatchObj,
+      //     PrimaryService: PrimaryService,
+      //     characteristic: characteristic
+      //   }
+      // }
       bluetoothDevice = null;
+      const filters = [{
+        // 如果你使用的  acceptAllDevices: true,  这个筛选条件,当你要连接 服务 和 特征 的时候,就必须添加一个 optionalServices 把你的服务的uuid 和 特征的uuid 写进入
+        // namePrefix: nowWatchObj.namePrefix,
+        // namePrefix: 'a'
+        services: services,
+        name: name
+      }]
+      if (isTest) {
+        delete filters[0].name
+      }
+      // console.log('filters:', filters);
+      addOperationHistory('filters:', JSON.stringify(filters))
+
       // 这一块的筛选条件在 推荐的网站1里面可以粗略的学习到
       await navigator.bluetooth.requestDevice({
-        filters: [{
-          // services: nowWatchObj.service,
-          // 如果你使用的  acceptAllDevices: true,  这个筛选条件,当你要连接 服务 和 特征 的时候,就必须添加一个 optionalServices 把你的服务的uuid 和 特征的uuid 写进入
-          // namePrefix: nowWatchObj.namePrefix,
-          // namePrefix: 'a'
-          // services: [nowWatchObj.PrimaryService],
-          name: name
-
-
-        }],
+        filters: filters,
         // optionalServices: nowWatchObj?.optionalServices
       }).then(device => {
         bluetoothDevice = device
         // console.log('获取蓝牙成功', device);
         addOperationHistory('获取蓝牙成功')
-        addOperationHistory('name:',device.name)
+        addOperationHistory('name:', device.name)
         // 监听蓝牙蓝牙断开
         bluetoothDevice.addEventListener('gattserverdisconnected', onDisconnected)
         connect()
@@ -143,14 +151,14 @@
         addOperationHistory('获取服务失败')
       })
     }
-    
+
     // 监听蓝牙断开
     function onDisconnected(max, delay, status) {
       // console.log('重连中');
       addOperationHistory('重连中')
       connect()
     }
-    
+
     // 重连
     function exponentialBackoff(max, delay, toTry, success, fail) {
       toTry().then(result => success(result))
@@ -163,7 +171,7 @@
           }, delay * 1000);
         });
     }
-    
+
     // 监听蓝牙数据返回
     function handleNotifications(event) {
       let value = event.target.value;
@@ -179,9 +187,9 @@
     const operationHistoryBox = document.getElementById('operationHistory');
 
     // 添加操作记录
-    function addOperationHistory(text) {
+    function addOperationHistory(...text) {
       const p = document.createElement('p');
-      p.innerText = text;
+      p.textContent = text.join(' ');
       operationHistoryBox.appendChild(p);
     }
 
