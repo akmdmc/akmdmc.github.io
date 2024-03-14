@@ -9,8 +9,8 @@
 </head>
 
 <body>
+  <h4>version:1.0.4</h4>
   <div>
-    <h4>version:1.0.3</h4>
     <p style="color: red;">此版本可以配对所有蓝牙，自己慢慢找把(记得修改uuid)</p>
     <!-- <p style="color: red;">测试按钮默认关闭，此按钮为开发人员的测试按钮，与蓝牙无关，即————<strong>别点</strong></p> -->
     <div>
@@ -77,8 +77,8 @@
       historyTime++
       addOperationHistory('-------------------' + historyTime + '-------------------')
       addOperationHistory('开始获取蓝牙');
-      addOperationHistory('PrimaryService:', nowUUid.PrimaryService)
-      addOperationHistory('characteristic:', nowUUid.characteristic)
+      // addOperationHistory('PrimaryService:', nowUUid.PrimaryService)
+      // addOperationHistory('characteristic:', nowUUid.characteristic)
       bluetoothDevice = null;
       // const filters = [{
       //   // 如果你使用的  acceptAllDevices: true,  这个筛选条件,当你要连接 服务 和 特征 的时候,就必须添加一个 optionalServices 把你的服务的uuid 和 特征的uuid 写进入
@@ -99,6 +99,13 @@
       blueToothOptions.acceptAllDevices = true
 
       addOperationHistory('blueToothOptions', JSON.stringify(blueToothOptions))
+
+      if (navigator.bluetooth) {
+        addOperationHistory('navigator.bluetooth:', 'true')
+      }
+      else {
+        addOperationHistory('navigator.bluetooth:', '浏览器不支持蓝牙')
+      }
 
       // 这一块的筛选条件在 推荐的网站1里面可以粗略的学习到
       await navigator.bluetooth.requestDevice(blueToothOptions).then(device => {
@@ -137,13 +144,15 @@
       // console.log('连接成功', server);
       addOperationHistory('连接成功')
       addOperationHistory('开始获取服务信息')
+      addOperationHistory('PrimaryService:', nowUUid.PrimaryService)
 
       server.getPrimaryService(nowUUid.PrimaryService).then(service => {
         // console.log('获取全部服务信息成功,开始获取特征信息', service)
         addOperationHistory('获取全部服务信息成功,开始获取特征信息')
+        addOperationHistory('characteristic:', nowUUid.characteristic)
         return service.getCharacteristic(nowUUid.characteristic)
       }).then(characteristic => {
-        
+
         return characteristic.startNotifications().then(_ => {
           // console.log('获取特征信息成功,开始监听蓝牙数据返回', characteristic);
           addOperationHistory('获取特征信息成功,开始监听蓝牙数据返回')
@@ -153,7 +162,7 @@
       }).catch(err => {
         // alert('获取服务失败', err)
         // console.log('获取服务失败', err);
-        addOperationHistory('获取服务失败',JSON.stringify(err))
+        addOperationHistory('获取服务失败', JSON.stringify(err))
       })
     }
 
@@ -166,13 +175,14 @@
 
     // 重连
     function exponentialBackoff(max, delay, toTry, success, fail) {
+      const originalMax = max;
       toTry().then(result => success(result))
         .catch(_ => {
           if (max === 0) {
             return fail();
           }
           setTimeout(function () {
-            addOperationHistory('重连中', max)
+            addOperationHistory('重连中', originalMax - max + 1, '次')
             exponentialBackoff(--max, delay * 2, toTry, success, fail);
           }, delay * 1000);
         });
