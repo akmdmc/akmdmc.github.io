@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>indexDB</title>
+</head>
+
+<body>
+  <script src="../../../utils/history.js"></script>
+  <script>
+    //////1.创建库
+
+    // 后面的回调中，我们可以通过event.target.result拿到数据库实例
+    let db
+    // 参数1为数据库名，参数2为版本号
+    const request = window.indexedDB.open("xDB", 4)
+
+    new Promise((resolve, reject) => {
+      // 使用IndexDB成功时的监听函数
+      request.onsuccess = function (event) {
+        resolve(event)
+      }
+      // 使用IndexDB失败时的监听函数
+      request.onerror = function (event) {
+        reject(event)
+      }
+
+      request.onupgradeneeded = function (event) {
+        db = event.target.result
+        let objectStore
+        // 如果同名表未被创建过，则新建test表
+        if (!db.objectStoreNames.contains('test')) {
+          objectStore = db.createObjectStore('test', { keyPath: 'id' })
+          addOneHistory('创建了test表')
+        }
+        else {
+          addOneHistory('test表已存在')
+        }
+      }
+
+    }).then((event) => {
+      addOneHistory('你打开了IndexDB')
+      // 此处就可以获取到db实例
+      db = event.target.result
+      // db = event.target.result
+      console.log("你打开了IndexDB", db)
+    })
+      .then(() => {
+        // 构建事务
+        // 创建事务，指定表格名称和读写权限
+        const transaction = db.transaction("test", "readwrite")
+        // 拿到Object Store对象
+        const objectStore = transaction.objectStore("test")
+        // 向表格写入数据
+        objectStore.put({ id: 'yourId', name: 'newName' })
+        objectStore.get('yourId').onsuccess = function (event) {
+          console.log('get', event.target.result)
+          addOneHistory('get' + JSON.stringify(event.target.result))
+        }
+        
+
+        // //////4.监听
+
+        // 操作成功时的监听函数
+        transaction.oncomplete = function (event) {
+          console.log("操作成功",event) 
+        }
+        // 操作失败时的监听函数
+        transaction.onerror = function (event) {
+          console.log("这里有一个Error",event.target)
+          addOneHistory(event.target.error.message)
+        }
+      })
+      .catch((event) => {
+        console.log('无法使用IndexDB', event)
+        addOneHistory(event)
+      })
+    // // 使用IndexDB失败时的监听函数
+    // request.onerror = function (event) {
+    //   console.log('无法使用IndexDB')
+    //   addOneHistory('无法使用IndexDB')
+    // }
+    // // 成功
+    // request.onsuccess = function (event) {
+    //   addOneHistory('你打开了IndexDB')
+    //   // 此处就可以获取到db实例
+    //   db = request.result
+    //   // db = event.target.result
+    //   console.log("你打开了IndexDB", db)
+    // }
+
+    //////2.创建表
+
+    // onupgradeneeded事件会在初始化数据库/版本发生更新时被调用，我们在它的监听函数中创建object store
+    // request.onupgradeneeded = function (event) {
+    //   let objectStore
+    //   // 如果同名表未被创建过，则新建test表
+    //   if (!db.objectStoreNames.contains('test')) {
+    //     objectStore = db.createObjectStore('test', { keyPath: 'id' })
+    //     addOneHistory('创建了test表')
+    //   }
+    //   else {
+    //     addOneHistory('test表已存在')
+    //   }
+
+    // }
+
+    // //////3.构建事务
+
+    // // 创建事务，指定表格名称和读写权限
+    // // 拿到Object Store对象
+    // const objectStore = transaction.objectStore("test")
+    // // 向表格写入数据
+    // objectStore.add({ id: 1, name: 'xiuyan' })
+
+    // //////4.监听
+
+    // // 操作成功时的监听函数
+    // transaction.oncomplete = function (event) {
+    //   console.log("操作成功")
+    // }
+    // // 操作失败时的监听函数
+    // transaction.onerror = function (event) {
+    //   console.log("这里有一个Error")
+    // }
+  </script>
+</body>
+
+</html>
