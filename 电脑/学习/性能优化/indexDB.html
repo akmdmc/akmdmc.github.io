@@ -57,19 +57,19 @@
         objectStore.put({ id: 'yourId', name: 'newName' })
         objectStore.get('yourId').onsuccess = function (event) {
           console.log('get', event.target.result)
-          addOneHistory('get' + JSON.stringify(event.target.result))
+          addOneHistory(JSON.stringify(event.target.result), 'get')
         }
-        
+
 
         // //////4.监听
 
         // 操作成功时的监听函数
         transaction.oncomplete = function (event) {
-          console.log("操作成功",event) 
+          console.log("操作成功", event)
         }
         // 操作失败时的监听函数
         transaction.onerror = function (event) {
-          console.log("这里有一个Error",event.target)
+          console.log("这里有一个Error", event.target)
           addOneHistory(event.target.error.message)
         }
       })
