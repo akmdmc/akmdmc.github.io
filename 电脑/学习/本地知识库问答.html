@@ -1,0 +1,314 @@
+<html>
+ 
+<head>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <meta http-equiv="Access-Control-Allow-Origin" content="*" />
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <title>本地知识库问答</title>
+</head>
+ 
+<body>
+    <div class="rightSide">
+        <div class="header">
+            <div class="imgText">
+                <div class="userimg">
+                  
+                </div>
+                <h4>本地知识库问答<br><span>在线</span></h4>
+            </div>
+        </div>
+        <!--chatbox-->
+        <div id="chatBox" class="chatBox">
+            <div class="message frnd_message">
+                <p>欢迎使用本地知识库大模型，有什么问题都可以问我。</span><br><span id="time"></span> </p>
+            </div>
+        </div>
+ 
+        <!--chat input-->
+        <div class="chatbox_input">
+            <div class="chatbox_input_div">
+                <input id="chatInput" type="text">
+                <button id="chatbox_input_send" class="chatbox_input_send">发送</button>
+            </div>
+        </div>
+    </div>
+</body>
+<script>
+    document.getElementById('time').innerHTML = new Date().toLocaleString();
+ 
+    var defuleValue = ''
+ 
+    function debounce(fn, delay = 2000) {
+        // 是闭包中的
+        let timer
+        let changeDom = document.getElementById('chatbox_input_send')
+        // input事件调用的函数，相当于obj调用函数 this指向Input
+        return function () {
+            defuleValue = document.getElementById('chatInput').value
+            // 这个if 判断不做也没关系，判断了（除第一次非空的情况）也就是执行从第二次开始，在延迟时间内多次触发才会走该判断
+            if (timer) {
+                clearTimeout(timer)
+            } else {
+                changeDom.innerHTML = '正在询问'
+                changeDom.disabled = true
+                document.getElementById('chatInput').value = ""
+            }
+            // 此时的箭头函数的this 和 arguments 都是从外部函数继承而来
+            // 如果用普通函数就要用词法作用域 var that = this var arg = arguments
+            timer = setTimeout(() => {
+                // 使得传入的回调函数的this 指向Input这个元素对象
+                // arguments是该事件的详情，可以获得该函数被调用时的所有参数,是一个event 对象（所有Dom事件都会传event对象进入）
+                // 直接使用 fn() 问题也不大
+                fn.apply(this, arguments)
+                timer = null
+            }, delay)
+        }
+    }
+    // 直接使用
+    document.getElementById('chatbox_input_send').addEventListener('click', debounce(() => {
+        // 可直接使用this.value获得输入框的值; arguments可用于获取具体触发事件的信息
+        // console.log(defuleValue)
+        this.handleSend(defuleValue)
+    }))
+ 
+    document.getElementById('chatInput').addEventListener('keydown', function (event) {
+        if (event.keyCode == "13") {
+            document.getElementById('chatbox_input_send').click();
+        }
+    })
+ 
+    function handleSend(inputValue) {
+        // console.log(1);
+        let inputDom = document.getElementById('chatBox');
+        if (!inputValue.length) {
+            alert('请输入您的问题！');
+            document.getElementById('chatbox_input_send').innerHTML = '发送'
+            document.getElementById('chatbox_input_send').disabled = false
+            defuleValue = ""
+            return
+        }
+        if (inputValue.length > 50) {
+            alert('您输入的问题过长！');
+            document.getElementById('chatbox_input_send').innerHTML = '发送'
+            document.getElementById('chatbox_input_send').disabled = false
+            defuleValue = ""
+            return
+        }
+        inputDom.innerHTML = inputDom.innerHTML + '<div class="message my_message"><p>' + inputValue +
+            '</span><br><span>' + new Date().toLocaleString() + '</span> </p></div>'
+        const params = {
+          		"query": inputValue,
+  			"knowledge_base_name": "bluetax",
+  			"top_k": 3,
+  			"score_threshold": 1,
+  			"stream": false,
+  			"model_name": "chatglm3-6b",
+  			"temperature": 0.7,
+  			"max_tokens": 0,
+  			"prompt_name": "default"
+        }
+        let xhr = new XMLHttpRequest();
+        xhr.open('post', `http://localhost:8899/chat/knowledge_base_chat`);
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.setRequestHeader('Accept', 'application/json');
+        // xhr.setRequestHeader('Authorization', 'Bearer 此处写你的fk');
+        xhr.send(JSON.stringify(params));
+        xhr.onload = function () {
+            var responseText = xhr.responseText;//返回结果
+            console.log(responseText);
+            var newText = responseText.replace("data: ", "");
+            console.log(newText);
+            let res = JSON.parse(newText)
+            inputDom.innerHTML = inputDom.innerHTML +
+                '<div class="message frnd_message"><p>' + res.answer + '</span><br><span>' +
+                new Date().toLocaleString() +
+                '</span> </p></div>'
+            document.getElementById('chatbox_input_send').innerHTML = '发送'
+            document.getElementById('chatbox_input_send').disabled = false
+            defuleValue = ""
+        }
+    }
+</script>
+ 
+</html>
+<style>
+    .chatbox_input_div {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+ 
+    .chatbox_input_send {
+        width: 80px;
+        height: 30px;
+    }
+ 
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Open Sans', sans-serif;
+    }
+ 
+    body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        background: linear-gradient(#009688 0%, #009688 130px, #d9dbd5 130px, #d9dbd5 100%)
+    }
+ 
+ 
+    .rightside {
+        background: #e5ddd5;
+        width: 100%;
+        position: fixed;
+        top: 50px;
+    }
+ 
+    .rightside::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        opacity: 0.06;
+    }
+ 
+    .header {
+        position: relative;
+        width: 100%;
+        height: 60px;
+        background: #ededed;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 15px;
+    }
+ 
+    .userimg {
+        position: relative;
+        width: 40px;
+        height: 40px;
+        overflow: hidden;
+        border-radius: 50%;
+        cursor: pointer;
+    }
+ 
+    .cover {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+ 
+    .imgText {
+        position: relative;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+ 
+    .imgText h4 {
+        font-weight: 500;
+        line-height: 1.2em;
+        margin-left: 15px;
+    }
+ 
+    .imgText h4 span {
+        font-size: 0.8em;
+        color: #555;
+    }
+ 
+    .chatBox {
+        position: relative;
+        width: 100%;
+        /* height: calc(100%-120px); */
+        height: 70vh;
+        padding: 50px;
+        overflow-y: auto;
+    }
+ 
+    .message {
+        position: relative;
+        display: flex;
+        width: 100%;
+        margin: 5px 0;
+    }
+ 
+    .message p {
+        position: relative;
+        right: 0;
+        text-align: right;
+        max-width: 65%;
+        padding: 12px;
+        background: #dcf8c6;
+        border-radius: 10px;
+        font-size: 0.9em;
+    }
+ 
+    .message p::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        right: -12px;
+        width: 20px;
+        height: 20px;
+        background: linear-gradient(135deg, #dcf8c6 0%, #dcf8c6 50%, transparent 50%, transparent);
+    }
+ 
+    .message p span {
+        display: block;
+        margin-top: 5px;
+        font-size: 0.85em;
+        opacity: 0.5;
+    }
+ 
+    .my_message {
+        justify-content: flex-end;
+    }
+ 
+    .frnd_message {
+        justify-content: flex-start;
+    }
+ 
+    .frnd_message p {
+        background: #fff;
+        text-align: left;
+    }
+ 
+    .message.frnd_message p::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -12px;
+        width: 20px;
+        height: 20px;
+        background: linear-gradient(225deg, #fff 0%, #fff 50%, transparent 50%, transparent);
+    }
+ 
+    .chatbox_input {
+        position: relative;
+        width: 100%;
+        /* height: 150px; */
+        background: #f0f0f0;
+        padding: 15px;
+        justify-content: space-between;
+        align-items: center;
+    }
+ 
+    .chatbox_input input {
+        position: relative;
+        width: 90%;
+ 
+        margin: 0 20px;
+        padding: 10px 20px;
+        border: none;
+        outline: none;
+        border-radius: 30px;
+        font-size: 1em;
+    }
+</style>
