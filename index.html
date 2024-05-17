@@ -198,9 +198,9 @@
             display: none;
         }
 
-        .footer{
+        .footer {
             position: fixed;
-            bottom: 2%; 
+            bottom: 2%;
             left: 50%;
             transform: translate(-50%, 0);
             color: rgba(0, 0, 0, 0.5);
@@ -265,5 +265,23 @@
     </div>
     <script src="./audio.js"></script>
 </body>
+
+<script>
+    let toolFlag = false;
+    window.addEventListener('keydown', (e) => {
+        if (e.key === 'alt' || e.keyCode === 18) {
+            toolFlag = true;
+        }
+        if (e.key === 't' || e.keyCode === 84 && toolFlag) {
+            location.href = './小工具/字段json生成器/index.html'
+        }
+    })
+
+    window.addEventListener('keyup', (e) => {
+        if (e.key === 'alt' || e.keyCode === 18) {
+            toolFlag = false;
+        }
+    })
+</script>
 
 </html>

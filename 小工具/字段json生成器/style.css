@@ -1,0 +1,94 @@
+body{
+  background-color: rgb(245, 245, 245);
+}
+
+section{
+  background-color: white;
+  margin: 20px 10px;
+  padding: 10px 20px;
+}
+
+button{
+    padding: 5px 10px;
+    margin: 0px 5px;
+    border: 1px solid #ccc;
+    background-color: #f0f0f0;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+input{
+    padding: 5px 10px;
+    margin: 0px 5px;
+    border: 1px solid #ccc;
+    outline: none ;
+}
+
+input[type="text"]{
+    width: 200px;
+}
+
+input:hover{
+    border: 1px solid #000;
+}
+
+select{
+    padding: 5px 10px;
+    margin: 0px 5px;
+    border: 1px solid #ccc;
+    outline: none ;
+    width: 200px;
+}
+
+textarea{
+    padding: 5px 10px;
+    margin: 0px 5px;
+    border: 1px solid #ccc;
+    outline: none ;
+    width: 320px;
+    min-height: 120px;
+}
+
+.rowContainer{
+    display: flex;
+    justify-content: start;
+    align-items: start;
+    margin: 10px 5px;
+}
+
+.container{
+    display: flex;
+    justify-content: start;
+    align-items: start;
+    margin: 10px 5px;
+}
+
+.labelContainer{
+    display: flex;
+    justify-content: start;
+    align-items: start;
+    margin: 10px 10px;
+    min-width: 320px;
+}
+
+#fieldList{
+    display: flex;
+    flex-direction:row;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.fields-list{
+    border: 1px solid #ccc;
+    padding:10px 20px 10px 32px;
+    width:200px;
+    height: 100px;
+    margin-left: 10px;
+    overflow: auto;
+}
+
+#copyBoard{
+  max-width: 400px;
+  max-height: 200px;
+  margin-left: 10px;
+}
