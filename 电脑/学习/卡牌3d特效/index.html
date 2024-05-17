@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>卡片翻转</title>
+  <style>
+    body {
+      background-color: rgb(85, 91, 106);
+    }
+
+    .container {
+      width: 200px;
+      height: 276px;
+      perspective: 1000px;
+    }
+
+    img {
+      width: 200px;
+      height: 276px;
+      transition: linear 0.1s;
+      box-shadow: -3px -3px 28px 36px rgba(85, 91, 106) inset;
+      transform-style: preserve-3d;
+    }
+
+    img:hover {
+      background-color: rgb(255, 255, 255);
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <img src="./ls.png" alt="">
+  </div>
+  <script>
+    const img = document.querySelector('img')
+    const { x, y, width, height } = img.getBoundingClientRect()
+    console.log(x, y, width, height);
+    img.addEventListener('mousemove', (e) => {
+      const degX = (e.clientY - (x + height / 2)) / 7
+      const degY = (e.clientX - (y + width / 2)) / 7
+      console.log(degX, degY);
+      img.style.transform = `rotateX(${degX}deg) rotateY(${-degY}deg) scale3d(1.1, 1.1, 1.1)`
+    })
+
+    img.addEventListener('mouseleave', () => {
+      img.style.transform = `rotateZ(0deg) rotateY(0deg)`
+    })
+  </script>
+</body>
+
+</html>
