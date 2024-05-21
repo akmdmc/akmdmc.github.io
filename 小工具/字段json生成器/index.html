@@ -23,6 +23,7 @@
           <option value="number">数字</option>
           <option value="boolean">布尔值</option>
           <option value="array">数组</option>
+          <option value="range">范围</option>
           <option value="object">对象</option>
         </select>
       </div>
@@ -33,7 +34,7 @@
           <option value="select">select</option>
           <option value="radio">radio</option>
           <option value="checkbox">checkbox</option>
-          <option value="textarea">textarea</option>
+          <option value="textArea">textArea</option>
           <option value="button">button</option>
           <option value="date">date</option>
           <option value="time">time</option>
@@ -122,7 +123,16 @@
           enumNames: [],
           widget: widgetSelect.value,
         }
-      } else {
+      }
+      else if (widgetSelect.value === 'range') {
+        jsonObj[dataIndex] = {
+          title: titleValue,
+          type: typeSelect.value,
+          format: "date",
+        }
+      }
+
+      else {
         jsonObj[dataIndex] = {
           title: titleValue,
           type: typeSelect.value,
