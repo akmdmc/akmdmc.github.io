@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <div id="t1">1</div>
+  <script>
+    var div = document.querySelector('#t1');
+    function a1() {
+      console.log('a1');
+    }
+    class b1 {
+      constructor() {
+        console.log('b1');
+      }
+    }
+    const ele = {
+      $$typeof: Symbol.for('react.element'),
+    }
+    function* c1() {
+      yield 1;
+      yield 2;
+      yield 3;
+    }
+    const generator = c1();
+    console.log(generator.next());
+    function list() {
+      let num = 1;
+      return {
+        next: function () {
+          console.log(num++);
+          const that = this;
+          return that;
+        }
+      }
+    }
+    const list1 = list();
+    list1.next().next().next();
+    // console.log(typeof a1);
+
+    console.log("/////");
+    const arr = [1,2,3,4,5,6];
+    arr.reduce((pre,current) => {
+      console.log(pre,current);
+      return pre+current;
+    }, 0);
+  </script>
+</body>
+
+</html>
