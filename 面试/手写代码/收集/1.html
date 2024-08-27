@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <script>
+
+    function Fnc() {
+      getName = () => console.log(1);
+      return this
+    }
+
+    Fnc.getName = () => console.log(2);
+
+    Fnc.prototype.getName = () => console.log(3);
+
+    var getName = () => console.log(4);
+
+    function getName() {
+      console.log(5);
+    }
+
+    // Fnc.getName()
+    // getName()
+    // Fnc().getName()
+    // getName()
+
+    // console.log(Fnc());
+
+
+
+    console.log(window);
+    console.log(this, 'this');
+
+    const obj = {
+      a: 1,
+      b: {
+        c: () => {
+          console.log(this);
+          
+          return this
+        }
+      },
+      d:{
+        e:function(){
+          console.log(this);
+          return this
+        }
+      }
+    }
+    console.log(obj.b.c());
+    obj.d.e()
+  </script>
+</body>
+
+</html>
