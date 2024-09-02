@@ -4,57 +4,57 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
-  <style>
-    td,
-    th,
-    table {
-      border: 1px solid black;
-      border-collapse: collapse;
-    }
-
-    td{
-      padding: 20px;
-    }
-
-    th {
-      background-color: rgb(49, 34, 112);
-      padding: 20px;
-      color: white;
-    }
-  </style>
 </head>
 
 <body>
-  <h1>Dear Team,</h1>
-  <p>p1</p>
-  <p>p2</p>
-  <table>
-    <thead>
-      <tr>
-        <th>t1</th>
-        <th>t2</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td>t1</td>
-        <td>t2</td>
-      </tr>
-      <tr>
-        <td>t1</td>
-        <td>t2</td>
-      </tr>
-      <tr>
-        <td>t1</td>
-        <td>t2</td>
-      </tr>
-      <tr>
-        <td>t1</td>
-        <td>t2</td>
-      </tr>
-    </tbody>
-  </table>
+  <section id="ppEmail">
+    <p>Dear Team,</p>
+    <p>The following transactions with the details below have been confirmed erroneously.</p>
+    <p>Kindly hold funds and avail salvaged amount for a possible recall.</p>
+    <table style="border: 1px solid black;border-collapse: collapse;">
+      <thead>
+        <tr>
+          <th
+            style="border: 1px solid black;border-collapse: collapse;background-color: rgb(49, 34, 112);padding: 20px;color: white;">
+            SESSION ID</th>
+          <th
+            style="border: 1px solid black;border-collapse: collapse;background-color: rgb(49, 34, 112);padding: 20px;color: white;">
+            TRANSACTION DATE</th>
+          <th
+            style="border: 1px solid black;border-collapse: collapse;background-color: rgb(49, 34, 112);padding: 20px;color: white;">
+            TRANSACTION AMOUNT</th>
+          <th
+            style="border: 1px solid black;border-collapse: collapse;background-color: rgb(49, 34, 112);padding: 20px;color: white;">
+            PALMPAY SENDER'S NAME</th>
+          <th
+            style="border: 1px solid black;border-collapse: collapse;background-color: rgb(49, 34, 112);padding: 20px;color: white;">
+            PALMPAY ACCOUNT ID/NUMBER</th>
+          <th
+            style="border: 1px solid black;border-collapse: collapse;background-color: rgb(49, 34, 112);padding: 20px;color: white;">
+            BENEFICIARY BANK</th>
+          <th
+            style="border: 1px solid black;border-collapse: collapse;background-color: rgb(49, 34, 112);padding: 20px;color: white;">
+            BENEFICIARY ACCOUNT NUMBER</th>
+          <th
+            style="border: 1px solid black;border-collapse: collapse;background-color: rgb(49, 34, 112);padding: 20px;color: white;">
+            BENEFICIARY NAME</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="border: 1px solid black;border-collapse: collapse;padding: 20px;">${sessionId}</td>
+          <td style="border: 1px solid black;border-collapse: collapse;padding: 20px;">${transactionDate}</td>
+          <td style="border: 1px solid black;border-collapse: collapse;padding: 20px;">${transactionAmount}</td>
+          <td style="border: 1px solid black;border-collapse: collapse;padding: 20px;">${palmpaySenderName}</td>
+          <td style="border: 1px solid black;border-collapse: collapse;padding: 20px;">${palmpayAccountId}</td>
+          <td style="border: 1px solid black;border-collapse: collapse;padding: 20px;">${beneficiaryBank}</td>
+          <td style="border: 1px solid black;border-collapse: collapse;padding: 20px;">${beneficiaryAccountId}</td>
+          <td style="border: 1px solid black;border-collapse: collapse;padding: 20px;">${beneficiaryName}</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
 </body>
+
 
 </html>
