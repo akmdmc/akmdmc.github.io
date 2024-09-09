@@ -5,61 +5,25 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Document</title>
+  <script src="./main.js"></script>
 </head>
 
 <body>
-
-  <script src="./main.js"></script>
+  <button id="btn">今日课表</button>
   <script>
-    //test
-    // const MonthDayNumber = {
-    //   1: 31,
-    //   2: (() => {
-    //     const date = new Date();
-    //     return isLeapYear(date.getFullYear()) ? 29 : 28;
-    //   })(),
-    //   3: 31,
-    //   4: 30,
-    //   5: 31,
-    //   6: 30,
-    //   7: 31,
-    //   8: 31,
-    //   9: 30,
-    //   10: 31,
-    //   11: 30,
-    //   12: 31,
-    // };
 
-    //start 2024.9.9 星期一
-    // const date = new Date()
-    // console.log(date.getFullYear(), date.getMonth() + 1, date.getDate());
+    let btn = document.getElementById("btn")
+    btn.addEventListener("click", btnClick)
+    function btnClick() {
 
-    // const StartYear = 2024, StartMonth = 9, StartDay = 9
-    // function calculateDay(year, month, day) {
-    //   let startDay = 1;
-    //   if (year > StartYear) {
-    //     let days = 0
-    //     for (let i = StartMonth; i < 12; i++) {
-    //       days += MonthDayNumber[i]
-    //     }
-    //     for (let i = 1; i < month; i++) {
-    //       days += MonthDayNumber[i]
-    //     }
-    //     startDay += days + day - StartDay
-    //   }
-    //   else {
-    //     let days = 0
-    //     for (let i = StartMonth; i < month; i++) {
-    //       days += MonthDayNumber[i]
-    //     }
-    //     startDay += days + day - StartDay
-    //   }
-    //   return [Math.ceil(startDay / 7), startDay % 7 === 0 ? 7 : startDay % 7]
-    // }
+      console.log(getLesson({
+        year: 2024,
+        month: 9,
+        day: 14,
+      }));
 
-    // console.log(calculateDay(2024, 10, 23), 'days');
-    console.log(getLesson(2024, 9, 10), 'test');
 
+    }
   </script>
 </body>
 

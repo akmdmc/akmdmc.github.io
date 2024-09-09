@@ -109,7 +109,7 @@ function start() {
       return data as ILesson[];
     })
     .then((data) => {
-      console.log(data, "data");
+      // console.log(data, "data");
       lessonList = data;
       const todayLesson = getTodayLesson();
       console.log(todayLesson, "todayLesson");

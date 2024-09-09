@@ -15,7 +15,7 @@ var MonthDayNumber = {
     9: 30,
     10: 31,
     11: 30,
-    12: 31,
+    12: 31
 };
 //是否为闰年
 function isLeapYear(year) {
@@ -43,7 +43,7 @@ function calculateDay(year, month, day) {
     }
     return {
         currentWeek: Math.ceil(startDay / 7),
-        currentDay: startDay % 7 === 0 ? 7 : startDay % 7,
+        currentDay: startDay % 7 === 0 ? 7 : startDay % 7
     };
 }
 //通过 年月日 得对应课程
@@ -71,7 +71,7 @@ function getTodayLesson() {
     return getLesson({
         year: date.getFullYear(),
         month: date.getMonth() + 1,
-        day: date.getDate(),
+        day: date.getDate()
     });
 }
 function start() {
@@ -83,7 +83,7 @@ function start() {
         return data;
     })
         .then(function (data) {
-        console.log(data, "data");
+        // console.log(data, "data");
         lessonList = data;
         var todayLesson = getTodayLesson();
         console.log(todayLesson, "todayLesson");
