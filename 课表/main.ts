@@ -32,6 +32,37 @@ const MonthDayNumber = {
   12: 31,
 };
 
+const DayTimeArray = {
+  1: ["8:15", "9:00"],
+  2: ["9:05", "9:50"],
+  3: ["10:10", "10:55"],
+  4: ["11:00", "11:45"],
+  5: ["14:00", "14:45"],
+  6: ["14:50", "15:35"],
+  7: ["15:55", "16:40"],
+  8: ["16:45", "17:30"],
+  9: ["19:00", "19:45"],
+  10: ["19:50", "20:35"],
+  11: ["20:40", "21:25"],
+};
+
+function getAfterNDay({ year, month, day, n }) {
+  let currentYear = year;
+  let currentMonth = month;
+  let currentDay = day + n;
+  let maxMonthNum = MonthDayNumber[currentMonth];
+  while (currentDay > maxMonthNum) {
+    currentDay -= maxMonthNum;
+    if (++currentMonth > 12) {
+      currentMonth = 1;
+      currentYear++;
+    }
+    maxMonthNum = MonthDayNumber[currentMonth];
+  }
+
+  return { year: currentYear, month: currentMonth, day: currentDay };
+}
+
 //是否为闰年
 function isLeapYear(year: number) {
   return (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;
@@ -88,7 +119,15 @@ function getLesson({
     return false;
   });
 
-  return todayLesson;
+  return todayLesson.map((v) => {
+    return {
+      ...v,
+      lessonTimeRange: [
+        DayTimeArray[v.lessonDayTimeRange[0]][0],
+        DayTimeArray[v.lessonDayTimeRange[1]][1],
+      ],
+    };
+  });
 }
 
 //今日课表

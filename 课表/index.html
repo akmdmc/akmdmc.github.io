@@ -10,6 +10,10 @@
 
 <body>
   <button id="btn">今日课表</button>
+
+  <div>
+    
+  </div>
   <script>
 
     let btn = document.getElementById("btn")
@@ -19,7 +23,15 @@
       console.log(getLesson({
         year: 2024,
         month: 9,
-        day: 14,
+        day: 10,
+      }));
+
+      const date = new Date();
+      console.log(getAfterNDay({
+        year: date.getFullYear(),
+        month: date.getMonth() + 1,
+        day: date.getDate(),
+        n: 1
       }));
 
 

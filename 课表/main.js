@@ -1,3 +1,14 @@
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
 var StartYear = 2024, StartMonth = 8, StartDay = 26; //2024.9.9 星期一 开学
 var lessonList = [];
 var MonthDayNumber = {
@@ -15,8 +26,37 @@ var MonthDayNumber = {
     9: 30,
     10: 31,
     11: 30,
-    12: 31
+    12: 31,
 };
+var DayTimeArray = {
+    1: ["8:15", "9:00"],
+    2: ["9:05", "9:50"],
+    3: ["10:10", "10:55"],
+    4: ["11:00", "11:45"],
+    5: ["14:00", "14:45"],
+    6: ["14:50", "15:35"],
+    7: ["15:55", "16:40"],
+    8: ["16:45", "17:30"],
+    9: ["19:00", "19:45"],
+    10: ["19:50", "20:35"],
+    11: ["20:40", "21:25"],
+};
+function getAfterNDay(_a) {
+    var year = _a.year, month = _a.month, day = _a.day, n = _a.n;
+    var currentYear = year;
+    var currentMonth = month;
+    var currentDay = day + n;
+    var maxMonthNum = MonthDayNumber[currentMonth];
+    while (currentDay > maxMonthNum) {
+        currentDay -= maxMonthNum;
+        if (++currentMonth > 12) {
+            currentMonth = 1;
+            currentYear++;
+        }
+        maxMonthNum = MonthDayNumber[currentMonth];
+    }
+    return { year: currentYear, month: currentMonth, day: currentDay };
+}
 //是否为闰年
 function isLeapYear(year) {
     return (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;
@@ -43,7 +83,7 @@ function calculateDay(year, month, day) {
     }
     return {
         currentWeek: Math.ceil(startDay / 7),
-        currentDay: startDay % 7 === 0 ? 7 : startDay % 7
+        currentDay: startDay % 7 === 0 ? 7 : startDay % 7,
     };
 }
 //通过 年月日 得对应课程
@@ -63,7 +103,12 @@ function getLesson(_a) {
         }
         return false;
     });
-    return todayLesson;
+    return todayLesson.map(function (v) {
+        return __assign(__assign({}, v), { lessonTimeRange: [
+                DayTimeArray[v.lessonDayTimeRange[0]][0],
+                DayTimeArray[v.lessonDayTimeRange[1]][1],
+            ] });
+    });
 }
 //今日课表
 function getTodayLesson() {
@@ -71,7 +116,7 @@ function getTodayLesson() {
     return getLesson({
         year: date.getFullYear(),
         month: date.getMonth() + 1,
-        day: date.getDate()
+        day: date.getDate(),
     });
 }
 function start() {
