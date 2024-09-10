@@ -87,7 +87,7 @@
     "lessonWeekTimeRange": [3, 3],
     "lessonSingleWeek": 1,
     "lessonTeacher": "张茜",
-    "lessonClassRoom": "A321"
+    "lessonClassRoom": "A321(没空调)"
   },
   {
     "lessonName": "思想道德与法治",
@@ -195,7 +195,7 @@
     "lessonWeekTimeRange": [4, 16],
     "lessonSingleWeek": 0,
     "lessonTeacher": "王靖瑜",
-    "lessonClassRoom": "A321"
+    "lessonClassRoom": "A321(没空调)"
   },
   {
     "lessonName": "思想道德与法治",

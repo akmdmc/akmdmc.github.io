@@ -51,6 +51,8 @@ function getAfterNDay({ year, month, day, n }) {
   let currentMonth = month;
   let currentDay = day + n;
   let maxMonthNum = MonthDayNumber[currentMonth];
+  let maxLastMonthNum =
+    MonthDayNumber[currentMonth - 1 < 1 ? 12 : currentMonth - 1];
   while (currentDay > maxMonthNum) {
     currentDay -= maxMonthNum;
     if (++currentMonth > 12) {
@@ -58,6 +60,14 @@ function getAfterNDay({ year, month, day, n }) {
       currentYear++;
     }
     maxMonthNum = MonthDayNumber[currentMonth];
+  }
+  while (currentDay <= 0) {
+    currentDay += maxLastMonthNum;
+    if (--currentMonth <= 0) {
+      currentMonth = 12;
+      currentYear--;
+    }
+    maxMonthNum = maxLastMonthNum[currentMonth - 1 < 1 ? 12 : currentMonth - 1];
   }
 
   return { year: currentYear, month: currentMonth, day: currentDay };
