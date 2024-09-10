@@ -34,26 +34,33 @@
       </div>
     </div>
     <div id="bottomContainer">
-      <div>
-        <div>1</div>
-        <div>8:15 ~ 9:00</div>
-      </div>
-      <div>
-        <div>1</div>
-        <div>8:15 ~ 9:00</div>
-      </div>
-      <div>
-        <div>1</div>
-        <div>8:15 ~ 9:00</div>
-      </div>
-      <div>
-        <div>1</div>
-        <div>8:15 ~ 9:00</div>
+      <div id="leftBanner">
+        <!-- <div>
+          <div>1</div>
+          <div>8:15 ~ 9:00</div>
+        </div> -->
       </div>
     </div>
   </div>
   <button id="btn">今日课表</button>
   <script>
+
+    (() => {
+      const leftBanner = document.getElementById("leftBanner")
+      const fragment = document.createDocumentFragment()
+      Object.entries(DayTimeArray).map((item) => {
+        const div = document.createElement("div")
+        const index = document.createElement("div")
+        index.innerText = item[0]
+        const timeRange = document.createElement("div")
+        timeRange.innerText = item[1][0] + "~" + item[1][1]
+        div.appendChild(index)
+        div.appendChild(timeRange)
+        fragment.appendChild(div)
+      })
+      leftBanner.appendChild(fragment)
+    })()
+
 
     let btn = document.getElementById("btn")
     btn.addEventListener("click", btnClick)
@@ -62,7 +69,7 @@
       console.log(getLesson({
         year: 2024,
         month: 9,
-        day: 10,
+        day: 11,
       }));
 
       const date = new Date();
