@@ -73,6 +73,24 @@ function getAfterNDay({ year, month, day, n }) {
   return { year: currentYear, month: currentMonth, day: currentDay };
 }
 
+function getWeekLesson() {
+  const date = new Date();
+  const weekLessons = [];
+  const weekDay = date.getDay();
+  for (let i = 1; i <= 5; i++) {
+    const lesson = getLesson(
+      getAfterNDay({
+        year: date.getFullYear(),
+        month: date.getMonth() + 1,
+        day: date.getDate(),
+        n: i - weekDay,
+      })
+    );
+    weekLessons.push(...lesson);
+  }
+  return weekLessons;
+}
+
 //是否为闰年
 function isLeapYear(year: number) {
   return (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;

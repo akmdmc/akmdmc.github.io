@@ -41,6 +41,7 @@
       <!-- <canvas id="canvasLesson" height="660"></canvas> -->
     </div>
   </div>
+  <button id="btn">今日课表</button>
   <script>
     (() => {
       const leftBanner = document.getElementById("leftBanner")
@@ -97,47 +98,45 @@
       const BOX_HEIGHT = CONTAINER_HEIGHT / DAY_TIME_NODE_NUMBER
       const BOX_WIDTH = CONTAINER_WIDTH / WEEK_DAY_NUMBER
 
-      const lesson = {
-        "lessonName": "大学英语-1",
-        "lessonWeek": 3,
-        "lessonDayTimeRange": [3, 4],
-        "lessonWeekTimeRange": [5, 16],
-        "lessonSingleWeek": 0,
-        "lessonTeacher": "舒丽苹",
-        "lessonClassRoom": "A305"
+      function addLessonBox(lessons, fatherElement) {
+        const fragment = document.createDocumentFragment()
+        lessons.map((lesson) => {
+          const lessonBox = document.createElement("div")
+          lessonBox.style.top = `${BOX_HEIGHT * (lesson.lessonDayTimeRange[0] - 1)}px`
+          lessonBox.style.left = `${BOX_WIDTH * (lesson.lessonWeek - 1)}px`
+          lessonBox.className = "lessonBox"
+          lessonBox.style.width = BOX_WIDTH + 'px'
+          lessonBox.style.height = BOX_HEIGHT * (lesson.lessonDayTimeRange[1] - lesson.lessonDayTimeRange[0] + 1) + 'px'
+
+          const lessonName = document.createElement("div")
+          lessonName.style.marginBottom = "2px"
+          lessonName.innerText = lesson.lessonName
+          const lessonClassRoom = document.createElement("div")
+          lessonClassRoom.innerText = lesson.lessonClassRoom
+
+          lessonBox.appendChild(lessonName)
+          lessonBox.appendChild(lessonClassRoom)
+
+          fragment.appendChild(lessonBox)
+        })
+
+        fatherElement.appendChild(fragment)
       }
 
-      function addLessonBox(lesson, fatherElement) {
-        const lessonBox = document.createElement("div")
-        lessonBox.style.top = `${BOX_HEIGHT * (lesson.lessonDayTimeRange[0] - 1)}px`
-        lessonBox.style.left = `${BOX_WIDTH * (lesson.lessonWeek - 1)}px`
-        lessonBox.className = "lessonBox"
-        lessonBox.style.width = BOX_WIDTH + 'px'
-        lessonBox.style.height = BOX_HEIGHT * (lesson.lessonDayTimeRange[1] - lesson.lessonDayTimeRange[0] + 1) + 'px'
-
-        const lessonName = document.createElement("div")
-        lessonName.style.marginBottom = "2px"
-        lessonName.innerText = lesson.lessonName
-        const lessonClassRoom = document.createElement("div")
-        lessonClassRoom.innerText = lesson.lessonClassRoom
-
-        lessonBox.appendChild(lessonName)
-        lessonBox.appendChild(lessonClassRoom)
-
-        fatherElement.appendChild(lessonBox)
-      }
-
-      addLessonBox(lesson, rightLesson)
+      setTimeout(() => {
+        addLessonBox(getWeekLesson(), rightLesson)
+      }, 100)
     }
 
     renderLessonContainer()
-
   </script>
-  <button id="btn">今日课表</button>
-  <script>
+  <script>      
+  
     let btn = document.getElementById("btn")
     btn.addEventListener("click", btnClick)
     function btnClick() {
+
+
 
       console.log(getLesson({
         year: 2024,
@@ -154,10 +153,7 @@
       }));
 
 
-    }
-
-    
-  </script>
+    }</script>
 </body>
 
 </html>
