@@ -14,23 +14,23 @@
 
   <div id="lessonContainer">
     <div id="header">
-      <div class="week month">
+      <div class="month">
         <p>9月</p>
       </div>
       <div class="week">
-        <p>1</p>
+        <p>一</p>
       </div>
       <div class="week">
-        <p>2</p>
+        <p>二</p>
       </div>
       <div class="week">
-        <p>3</p>
+        <p>三</p>
       </div>
       <div class="week">
-        <p>4</p>
+        <p>四</p>
       </div>
       <div class="week">
-        <p>5</p>
+        <p>五</p>
       </div>
     </div>
     <div id="bottomContainer">
@@ -41,7 +41,6 @@
       <!-- <canvas id="canvasLesson" height="660"></canvas> -->
     </div>
   </div>
-  <button id="btn">今日课表</button>
   <script>
     (() => {
       const leftBanner = document.getElementById("leftBanner")
@@ -52,14 +51,34 @@
         const index = document.createElement("div")
         index.className = "title"
         index.innerText = item[0]
-        const timeRange = document.createElement("div")
-        timeRange.className = "miniText"
-        timeRange.innerText = item[1][0] + "~" + item[1][1]
+        const timeRange1 = document.createElement("div")
+        timeRange1.className = "miniText"
+        timeRange1.innerText = item[1][0]
+        const timeRange2 = document.createElement("div")
+        timeRange2.className = "miniText"
+        timeRange2.innerText = item[1][1]
         div.appendChild(index)
-        div.appendChild(timeRange)
+        div.appendChild(timeRange1)
+        div.appendChild(timeRange2)
         fragment.appendChild(div)
       })
       leftBanner.appendChild(fragment)
+
+      const weeks = document.querySelectorAll(".week")
+      const date = new Date();
+      const today = {
+        year: date.getFullYear(),
+        month: date.getMonth() + 1,
+        day: date.getDate(),
+      }
+      weeks.forEach((week, index) => {
+        const p = document.createElement("p")
+        if (index + 1 == date.getDay()) {
+          week.className = "week today"
+        }
+        p.innerText = getAfterNDay({ ...today, n: index + 1 - date.getDay() }).day
+        week.appendChild(p)
+      })
       // /** @type {HTMLCanvasElement} */
       // const ctn = document.getElementById("canvasLesson")
       // const CANVAS_WIDTH = ctn.width
@@ -105,8 +124,8 @@
           lessonBox.style.top = `${BOX_HEIGHT * (lesson.lessonDayTimeRange[0] - 1)}px`
           lessonBox.style.left = `${BOX_WIDTH * (lesson.lessonWeek - 1)}px`
           lessonBox.className = "lessonBox"
-          lessonBox.style.width = BOX_WIDTH + 'px'
-          lessonBox.style.height = BOX_HEIGHT * (lesson.lessonDayTimeRange[1] - lesson.lessonDayTimeRange[0] + 1) + 'px'
+          lessonBox.style.width = BOX_WIDTH - 4 + 'px'
+          lessonBox.style.height = BOX_HEIGHT * (lesson.lessonDayTimeRange[1] - lesson.lessonDayTimeRange[0] + 1) - 5 + 'px'
 
           const lessonName = document.createElement("div")
           lessonName.style.marginBottom = "2px"
@@ -130,8 +149,10 @@
 
     renderLessonContainer()
   </script>
-  <script>      
-  
+  <!--  -->
+  <!-- <button id="btn">今日课表</button>
+  <script>
+
     let btn = document.getElementById("btn")
     btn.addEventListener("click", btnClick)
     function btnClick() {
@@ -153,7 +174,7 @@
       }));
 
 
-    }</script>
+    }</script> -->
 </body>
 
 </html>
