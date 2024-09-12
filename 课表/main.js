@@ -1,3 +1,4 @@
+// import { lessonList } from "./data";
 var __assign = (this && this.__assign) || function () {
     __assign = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
@@ -10,7 +11,224 @@ var __assign = (this && this.__assign) || function () {
     return __assign.apply(this, arguments);
 };
 var START_YEAR = 2024, START_MONTH = 8, START_DAY = 26; //2024.9.9 星期一 开学
-var lessonList = [];
+var LESSON_LIST = [
+    {
+        lessonName: "大学英语-1",
+        lessonWeek: 1,
+        lessonDayTimeRange: [1, 2],
+        lessonWeekTimeRange: [3, 4],
+        lessonSingleWeek: 0,
+        lessonTeacher: "舒丽苹",
+        lessonClassRoom: "东502"
+    },
+    {
+        lessonName: "大学英语-1",
+        lessonWeek: 1,
+        lessonDayTimeRange: [1, 2],
+        lessonWeekTimeRange: [5, 16],
+        lessonSingleWeek: 0,
+        lessonTeacher: "舒丽苹",
+        lessonClassRoom: "A305"
+    },
+    {
+        lessonName: "中国古代文学-1",
+        lessonWeek: 1,
+        lessonDayTimeRange: [7, 8],
+        lessonWeekTimeRange: [3, 3],
+        lessonSingleWeek: 1,
+        lessonTeacher: "冉昊月",
+        lessonClassRoom: "B413"
+    },
+    {
+        lessonName: "中国古代文学-1",
+        lessonWeek: 1,
+        lessonDayTimeRange: [7, 8],
+        lessonWeekTimeRange: [4, 16],
+        lessonSingleWeek: 0,
+        lessonTeacher: "冉昊月",
+        lessonClassRoom: "A222"
+    },
+    {
+        lessonName: "形势与政策-1",
+        lessonWeek: 1,
+        lessonDayTimeRange: [9, 10],
+        lessonWeekTimeRange: [9, 12],
+        lessonSingleWeek: 0,
+        lessonTeacher: "何湘怡",
+        lessonClassRoom: "A219"
+    },
+    {
+        lessonName: "古代汉语-1",
+        lessonWeek: 2,
+        lessonDayTimeRange: [1, 2],
+        lessonWeekTimeRange: [3, 3],
+        lessonSingleWeek: 1,
+        lessonTeacher: "刘宇",
+        lessonClassRoom: "B410"
+    },
+    {
+        lessonName: "古代汉语-1",
+        lessonWeek: 2,
+        lessonDayTimeRange: [1, 2],
+        lessonWeekTimeRange: [4, 16],
+        lessonSingleWeek: 0,
+        lessonTeacher: "刘宇",
+        lessonClassRoom: "A115"
+    },
+    {
+        lessonName: "汉语写作",
+        lessonWeek: 2,
+        lessonDayTimeRange: [3, 4],
+        lessonWeekTimeRange: [9, 15],
+        lessonSingleWeek: 1,
+        lessonTeacher: "高强",
+        lessonClassRoom: "C305"
+    },
+    {
+        lessonName: "现代汉语-1",
+        lessonWeek: 2,
+        lessonDayTimeRange: [3, 4],
+        lessonWeekTimeRange: [10, 16],
+        lessonSingleWeek: 2,
+        lessonTeacher: "刘云峰",
+        lessonClassRoom: "B314(计科)"
+    },
+    {
+        lessonName: "思想道德与法治",
+        lessonWeek: 2,
+        lessonDayTimeRange: [5, 6],
+        lessonWeekTimeRange: [3, 3],
+        lessonSingleWeek: 1,
+        lessonTeacher: "张茜",
+        lessonClassRoom: "A321(没空调)"
+    },
+    {
+        lessonName: "思想道德与法治",
+        lessonWeek: 2,
+        lessonDayTimeRange: [5, 6],
+        lessonWeekTimeRange: [5, 16],
+        lessonSingleWeek: 0,
+        lessonTeacher: "张茜",
+        lessonClassRoom: "C301"
+    },
+    {
+        lessonName: "大学英语-1",
+        lessonWeek: 3,
+        lessonDayTimeRange: [3, 4],
+        lessonWeekTimeRange: [5, 16],
+        lessonSingleWeek: 0,
+        lessonTeacher: "舒丽苹",
+        lessonClassRoom: "A305"
+    },
+    {
+        lessonName: "大学英语-1",
+        lessonWeek: 3,
+        lessonDayTimeRange: [3, 4],
+        lessonWeekTimeRange: [3, 4],
+        lessonSingleWeek: 0,
+        lessonTeacher: "舒丽苹",
+        lessonClassRoom: "东502"
+    },
+    {
+        lessonName: "中国古代文学-1",
+        lessonWeek: 3,
+        lessonDayTimeRange: [5, 6],
+        lessonWeekTimeRange: [3, 16],
+        lessonSingleWeek: 0,
+        lessonTeacher: "冉昊月",
+        lessonClassRoom: "Z405"
+    },
+    {
+        lessonName: "古代汉语-1",
+        lessonWeek: 4,
+        lessonDayTimeRange: [1, 2],
+        lessonWeekTimeRange: [3, 3],
+        lessonSingleWeek: 1,
+        lessonTeacher: "刘宇",
+        lessonClassRoom: "B210(计科)"
+    },
+    {
+        lessonName: "古代汉语-1",
+        lessonWeek: 4,
+        lessonDayTimeRange: [1, 2],
+        lessonWeekTimeRange: [4, 16],
+        lessonSingleWeek: 0,
+        lessonTeacher: "刘宇",
+        lessonClassRoom: "A325"
+    },
+    {
+        lessonName: "汉语写作",
+        lessonWeek: 4,
+        lessonDayTimeRange: [3, 4],
+        lessonWeekTimeRange: [3, 3],
+        lessonSingleWeek: 1,
+        lessonTeacher: "高强",
+        lessonClassRoom: "D216"
+    },
+    {
+        lessonName: "汉语写作",
+        lessonWeek: 4,
+        lessonDayTimeRange: [3, 4],
+        lessonWeekTimeRange: [4, 16],
+        lessonSingleWeek: 1,
+        lessonTeacher: "高强",
+        lessonClassRoom: "A122"
+    },
+    {
+        lessonName: "中国现代文学",
+        lessonWeek: 4,
+        lessonDayTimeRange: [5, 6],
+        lessonWeekTimeRange: [10, 16],
+        lessonSingleWeek: 2,
+        lessonTeacher: "王靖瑜",
+        lessonClassRoom: "B109"
+    },
+    {
+        lessonName: "现代汉语-1",
+        lessonWeek: 5,
+        lessonDayTimeRange: [1, 2],
+        lessonWeekTimeRange: [3, 16],
+        lessonSingleWeek: 0,
+        lessonTeacher: "刘云峰",
+        lessonClassRoom: "Z207"
+    },
+    {
+        lessonName: "中国现代文学",
+        lessonWeek: 5,
+        lessonDayTimeRange: [3, 4],
+        lessonWeekTimeRange: [3, 3],
+        lessonSingleWeek: 1,
+        lessonTeacher: "王靖瑜",
+        lessonClassRoom: "B112(机械)"
+    },
+    {
+        lessonName: "中国现代文学",
+        lessonWeek: 5,
+        lessonDayTimeRange: [3, 4],
+        lessonWeekTimeRange: [4, 16],
+        lessonSingleWeek: 0,
+        lessonTeacher: "王靖瑜",
+        lessonClassRoom: "A321(没空调)"
+    },
+    {
+        lessonName: "思想道德与法治",
+        lessonWeek: 5,
+        lessonDayTimeRange: [7, 8],
+        lessonWeekTimeRange: [3, 3],
+        lessonSingleWeek: 1,
+        lessonTeacher: "张茜",
+        lessonClassRoom: "C303"
+    },
+    {
+        lessonName: "思想道德与法治",
+        lessonWeek: 5,
+        lessonDayTimeRange: [7, 8],
+        lessonWeekTimeRange: [5, 16],
+        lessonSingleWeek: 0,
+        lessonTeacher: "张茜",
+        lessonClassRoom: "A418"
+    },
+];
 var MONTH_DAY_NUMBER = {
     1: 31,
     2: (function () {
@@ -26,7 +244,7 @@ var MONTH_DAY_NUMBER = {
     9: 30,
     10: 31,
     11: 30,
-    12: 31,
+    12: 31
 };
 var DAY_TIME_ARRAY = {
     1: ["8:15", "9:00"],
@@ -39,7 +257,7 @@ var DAY_TIME_ARRAY = {
     8: ["16:45", "17:30"],
     9: ["19:00", "19:45"],
     10: ["19:50", "20:35"],
-    11: ["20:40", "21:25"],
+    11: ["20:40", "21:25"]
 };
 function getAfterNDay(_a) {
     var year = _a.year, month = _a.month, day = _a.day, n = _a.n;
@@ -75,7 +293,7 @@ function getWeekLesson() {
             year: date.getFullYear(),
             month: date.getMonth() + 1,
             day: date.getDate(),
-            n: i - weekDay,
+            n: i - weekDay
         }));
         weekLessons.push.apply(weekLessons, lesson);
     }
@@ -107,14 +325,14 @@ function calculateDay(year, month, day) {
     }
     return {
         currentWeek: Math.ceil(startDay / 7),
-        currentDay: startDay % 7 === 0 ? 7 : startDay % 7,
+        currentDay: startDay % 7 === 0 ? 7 : startDay % 7
     };
 }
 //通过 年月日 得对应课程
 function getLesson(_a) {
     var year = _a.year, month = _a.month, day = _a.day;
     var _b = calculateDay(year, month, day), currentDay = _b.currentDay, currentWeek = _b.currentWeek;
-    var todayLesson = lessonList.filter(function (v) {
+    var todayLesson = LESSON_LIST.filter(function (v) {
         if (currentDay === v.lessonWeek) {
             if (currentWeek >= v.lessonWeekTimeRange[0] &&
                 currentWeek <= v.lessonWeekTimeRange[1]) {
@@ -140,22 +358,6 @@ function getTodayLesson() {
     return getLesson({
         year: date.getFullYear(),
         month: date.getMonth() + 1,
-        day: date.getDate(),
+        day: date.getDate()
     });
 }
-function start() {
-    fetch("./lesson.json")
-        .then(function (data) {
-        return data.json();
-    })
-        .then(function (data) {
-        return data;
-    })
-        .then(function (data) {
-        // console.log(data, "data");
-        lessonList = data;
-        var todayLesson = getTodayLesson();
-        console.log(todayLesson, "todayLesson");
-    });
-}
-start();

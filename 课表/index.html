@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
+  <title>王艺睿的课表</title>
   <script src="./main.js"></script>
   <link rel="stylesheet" href="style.css">
 </head>
@@ -38,7 +38,6 @@
       </div>
       <div id="rightLesson">
       </div>
-      <!-- <canvas id="canvasLesson" height="660"></canvas> -->
     </div>
   </div>
   <script>
@@ -79,34 +78,6 @@
         p.innerText = getAfterNDay({ ...today, n: index + 1 - date.getDay() }).day
         week.appendChild(p)
       })
-      // /** @type {HTMLCanvasElement} */
-      // const ctn = document.getElementById("canvasLesson")
-      // const CANVAS_WIDTH = ctn.width
-      // const CANVAS_HEIGHT = ctn.width
-      // console.log(CANVAS_HEIGHT, CANVAS_HEIGHT, 'CANVAS_HEIGHT');
-
-      // const BOX_HEIGHT = 60;
-      // const BOX_WIDTH = CANVAS_WIDTH / 5;
-      // const lesCtx = ctn.getContext('2d')
-      // //start
-      // const lesson = {
-      //   "lessonName": "大学英语-1",
-      //   "lessonWeek": 3,
-      //   "lessonDayTimeRange": [3, 4],
-      //   "lessonWeekTimeRange": [5, 16],
-      //   "lessonSingleWeek": 0,
-      //   "lessonTeacher": "舒丽苹",
-      //   "lessonClassRoom": "A305"
-      // }
-      // lesCtx.strokeRect(0, 0, BOX_WIDTH, BOX_HEIGHT)
-      // lesCtx.fillText(lesson.lessonName, 0, BOX_HEIGHT / 2, BOX_WIDTH)
-      // lesCtx.beginPath()
-      // lesCtx.setLineDash([1, 4])
-      // lesCtx.lineWidth = 1
-      // lesCtx.moveTo(0, BOX_HEIGHT)
-      // lesCtx.lineTo(CANVAS_WIDTH, BOX_HEIGHT)
-      // lesCtx.stroke()
-
     })()
     function renderLessonContainer() {
       const rightLesson = document.getElementById("rightLesson")

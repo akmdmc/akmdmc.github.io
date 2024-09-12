@@ -1,3 +1,5 @@
+// import { lessonList } from "./data";
+
 interface ILesson {
   lessonName: string;
   lessonWeek: 1 | 2 | 3 | 4 | 5 | 6 | 7; //星期几
@@ -12,7 +14,224 @@ const START_YEAR = 2024,
   START_MONTH = 8,
   START_DAY = 26; //2024.9.9 星期一 开学
 
-let lessonList: ILesson[] = [];
+let LESSON_LIST: ILesson[] = [
+  {
+    lessonName: "大学英语-1",
+    lessonWeek: 1,
+    lessonDayTimeRange: [1, 2],
+    lessonWeekTimeRange: [3, 4],
+    lessonSingleWeek: 0,
+    lessonTeacher: "舒丽苹",
+    lessonClassRoom: "东502",
+  },
+  {
+    lessonName: "大学英语-1",
+    lessonWeek: 1,
+    lessonDayTimeRange: [1, 2],
+    lessonWeekTimeRange: [5, 16],
+    lessonSingleWeek: 0,
+    lessonTeacher: "舒丽苹",
+    lessonClassRoom: "A305",
+  },
+  {
+    lessonName: "中国古代文学-1",
+    lessonWeek: 1,
+    lessonDayTimeRange: [7, 8],
+    lessonWeekTimeRange: [3, 3],
+    lessonSingleWeek: 1,
+    lessonTeacher: "冉昊月",
+    lessonClassRoom: "B413",
+  },
+  {
+    lessonName: "中国古代文学-1",
+    lessonWeek: 1,
+    lessonDayTimeRange: [7, 8],
+    lessonWeekTimeRange: [4, 16],
+    lessonSingleWeek: 0,
+    lessonTeacher: "冉昊月",
+    lessonClassRoom: "A222",
+  },
+  {
+    lessonName: "形势与政策-1",
+    lessonWeek: 1,
+    lessonDayTimeRange: [9, 10],
+    lessonWeekTimeRange: [9, 12],
+    lessonSingleWeek: 0,
+    lessonTeacher: "何湘怡",
+    lessonClassRoom: "A219",
+  },
+  {
+    lessonName: "古代汉语-1",
+    lessonWeek: 2,
+    lessonDayTimeRange: [1, 2],
+    lessonWeekTimeRange: [3, 3],
+    lessonSingleWeek: 1,
+    lessonTeacher: "刘宇",
+    lessonClassRoom: "B410",
+  },
+  {
+    lessonName: "古代汉语-1",
+    lessonWeek: 2,
+    lessonDayTimeRange: [1, 2],
+    lessonWeekTimeRange: [4, 16],
+    lessonSingleWeek: 0,
+    lessonTeacher: "刘宇",
+    lessonClassRoom: "A115",
+  },
+  {
+    lessonName: "汉语写作",
+    lessonWeek: 2,
+    lessonDayTimeRange: [3, 4],
+    lessonWeekTimeRange: [9, 15],
+    lessonSingleWeek: 1,
+    lessonTeacher: "高强",
+    lessonClassRoom: "C305",
+  },
+  {
+    lessonName: "现代汉语-1",
+    lessonWeek: 2,
+    lessonDayTimeRange: [3, 4],
+    lessonWeekTimeRange: [10, 16],
+    lessonSingleWeek: 2,
+    lessonTeacher: "刘云峰",
+    lessonClassRoom: "B314(计科)",
+  },
+  {
+    lessonName: "思想道德与法治",
+    lessonWeek: 2,
+    lessonDayTimeRange: [5, 6],
+    lessonWeekTimeRange: [3, 3],
+    lessonSingleWeek: 1,
+    lessonTeacher: "张茜",
+    lessonClassRoom: "A321(没空调)",
+  },
+  {
+    lessonName: "思想道德与法治",
+    lessonWeek: 2,
+    lessonDayTimeRange: [5, 6],
+    lessonWeekTimeRange: [5, 16],
+    lessonSingleWeek: 0,
+    lessonTeacher: "张茜",
+    lessonClassRoom: "C301",
+  },
+  {
+    lessonName: "大学英语-1",
+    lessonWeek: 3,
+    lessonDayTimeRange: [3, 4],
+    lessonWeekTimeRange: [5, 16],
+    lessonSingleWeek: 0,
+    lessonTeacher: "舒丽苹",
+    lessonClassRoom: "A305",
+  },
+  {
+    lessonName: "大学英语-1",
+    lessonWeek: 3,
+    lessonDayTimeRange: [3, 4],
+    lessonWeekTimeRange: [3, 4],
+    lessonSingleWeek: 0,
+    lessonTeacher: "舒丽苹",
+    lessonClassRoom: "东502",
+  },
+  {
+    lessonName: "中国古代文学-1",
+    lessonWeek: 3,
+    lessonDayTimeRange: [5, 6],
+    lessonWeekTimeRange: [3, 16],
+    lessonSingleWeek: 0,
+    lessonTeacher: "冉昊月",
+    lessonClassRoom: "Z405",
+  },
+  {
+    lessonName: "古代汉语-1",
+    lessonWeek: 4,
+    lessonDayTimeRange: [1, 2],
+    lessonWeekTimeRange: [3, 3],
+    lessonSingleWeek: 1,
+    lessonTeacher: "刘宇",
+    lessonClassRoom: "B210(计科)",
+  },
+  {
+    lessonName: "古代汉语-1",
+    lessonWeek: 4,
+    lessonDayTimeRange: [1, 2],
+    lessonWeekTimeRange: [4, 16],
+    lessonSingleWeek: 0,
+    lessonTeacher: "刘宇",
+    lessonClassRoom: "A325",
+  },
+  {
+    lessonName: "汉语写作",
+    lessonWeek: 4,
+    lessonDayTimeRange: [3, 4],
+    lessonWeekTimeRange: [3, 3],
+    lessonSingleWeek: 1,
+    lessonTeacher: "高强",
+    lessonClassRoom: "D216",
+  },
+  {
+    lessonName: "汉语写作",
+    lessonWeek: 4,
+    lessonDayTimeRange: [3, 4],
+    lessonWeekTimeRange: [4, 16],
+    lessonSingleWeek: 1,
+    lessonTeacher: "高强",
+    lessonClassRoom: "A122",
+  },
+  {
+    lessonName: "中国现代文学",
+    lessonWeek: 4,
+    lessonDayTimeRange: [5, 6],
+    lessonWeekTimeRange: [10, 16],
+    lessonSingleWeek: 2,
+    lessonTeacher: "王靖瑜",
+    lessonClassRoom: "B109",
+  },
+  {
+    lessonName: "现代汉语-1",
+    lessonWeek: 5,
+    lessonDayTimeRange: [1, 2],
+    lessonWeekTimeRange: [3, 16],
+    lessonSingleWeek: 0,
+    lessonTeacher: "刘云峰",
+    lessonClassRoom: "Z207",
+  },
+  {
+    lessonName: "中国现代文学",
+    lessonWeek: 5,
+    lessonDayTimeRange: [3, 4],
+    lessonWeekTimeRange: [3, 3],
+    lessonSingleWeek: 1,
+    lessonTeacher: "王靖瑜",
+    lessonClassRoom: "B112(机械)",
+  },
+  {
+    lessonName: "中国现代文学",
+    lessonWeek: 5,
+    lessonDayTimeRange: [3, 4],
+    lessonWeekTimeRange: [4, 16],
+    lessonSingleWeek: 0,
+    lessonTeacher: "王靖瑜",
+    lessonClassRoom: "A321(没空调)",
+  },
+  {
+    lessonName: "思想道德与法治",
+    lessonWeek: 5,
+    lessonDayTimeRange: [7, 8],
+    lessonWeekTimeRange: [3, 3],
+    lessonSingleWeek: 1,
+    lessonTeacher: "张茜",
+    lessonClassRoom: "C303",
+  },
+  {
+    lessonName: "思想道德与法治",
+    lessonWeek: 5,
+    lessonDayTimeRange: [7, 8],
+    lessonWeekTimeRange: [5, 16],
+    lessonSingleWeek: 0,
+    lessonTeacher: "张茜",
+    lessonClassRoom: "A418",
+  },
+];
 
 const MONTH_DAY_NUMBER = {
   1: 31,
@@ -132,7 +351,7 @@ function getLesson({
   day: number;
 }) {
   const { currentDay, currentWeek } = calculateDay(year, month, day);
-  const todayLesson = lessonList.filter((v) => {
+  const todayLesson = LESSON_LIST.filter((v) => {
     if (currentDay === v.lessonWeek) {
       if (
         currentWeek >= v.lessonWeekTimeRange[0] &&
@@ -167,20 +386,3 @@ function getTodayLesson() {
     day: date.getDate(),
   });
 }
-function start() {
-  fetch("./lesson.json")
-    .then((data) => {
-      return data.json();
-    })
-    .then((data) => {
-      return data as ILesson[];
-    })
-    .then((data) => {
-      // console.log(data, "data");
-      lessonList = data;
-      const todayLesson = getTodayLesson();
-      console.log(todayLesson, "todayLesson");
-    });
-}
-
-start();
