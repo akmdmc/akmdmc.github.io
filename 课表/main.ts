@@ -8,13 +8,13 @@ interface ILesson {
   lessonClassRoom: string; //教室
 }
 
-const StartYear = 2024,
-  StartMonth = 8,
-  StartDay = 26; //2024.9.9 星期一 开学
+const START_YEAR = 2024,
+  START_MONTH = 8,
+  START_DAY = 26; //2024.9.9 星期一 开学
 
 let lessonList: ILesson[] = [];
 
-const MonthDayNumber = {
+const MONTH_DAY_NUMBER = {
   1: 31,
   2: (() => {
     const date = new Date();
@@ -32,7 +32,7 @@ const MonthDayNumber = {
   12: 31,
 };
 
-const DayTimeArray = {
+const DAY_TIME_ARRAY = {
   1: ["8:15", "9:00"],
   2: ["9:05", "9:50"],
   3: ["10:10", "10:55"],
@@ -50,16 +50,16 @@ function getAfterNDay({ year, month, day, n }) {
   let currentYear = year;
   let currentMonth = month;
   let currentDay = day + n;
-  let maxMonthNum = MonthDayNumber[currentMonth];
+  let maxMonthNum = MONTH_DAY_NUMBER[currentMonth];
   let maxLastMonthNum =
-    MonthDayNumber[currentMonth - 1 < 1 ? 12 : currentMonth - 1];
+    MONTH_DAY_NUMBER[currentMonth - 1 < 1 ? 12 : currentMonth - 1];
   while (currentDay > maxMonthNum) {
     currentDay -= maxMonthNum;
     if (++currentMonth > 12) {
       currentMonth = 1;
       currentYear++;
     }
-    maxMonthNum = MonthDayNumber[currentMonth];
+    maxMonthNum = MONTH_DAY_NUMBER[currentMonth];
   }
   while (currentDay <= 0) {
     currentDay += maxLastMonthNum;
@@ -99,21 +99,21 @@ function isLeapYear(year: number) {
 //计算第几周星期几   [第几周,星期几]
 function calculateDay(year: number, month: number, day: number) {
   let startDay = 1;
-  if (year > StartYear) {
+  if (year > START_YEAR) {
     let days = 0;
-    for (let i = StartMonth; i < 12; i++) {
-      days += MonthDayNumber[i];
+    for (let i = START_MONTH; i < 12; i++) {
+      days += MONTH_DAY_NUMBER[i];
     }
     for (let i = 1; i < month; i++) {
-      days += MonthDayNumber[i];
+      days += MONTH_DAY_NUMBER[i];
     }
-    startDay += days + day - StartDay;
+    startDay += days + day - START_DAY;
   } else {
     let days = 0;
-    for (let i = StartMonth; i < month; i++) {
-      days += MonthDayNumber[i];
+    for (let i = START_MONTH; i < month; i++) {
+      days += MONTH_DAY_NUMBER[i];
     }
-    startDay += days + day - StartDay;
+    startDay += days + day - START_DAY;
   }
   return {
     currentWeek: Math.ceil(startDay / 7),
@@ -151,8 +151,8 @@ function getLesson({
     return {
       ...v,
       lessonTimeRange: [
-        DayTimeArray[v.lessonDayTimeRange[0]][0],
-        DayTimeArray[v.lessonDayTimeRange[1]][1],
+        DAY_TIME_ARRAY[v.lessonDayTimeRange[0]][0],
+        DAY_TIME_ARRAY[v.lessonDayTimeRange[1]][1],
       ],
     };
   });
