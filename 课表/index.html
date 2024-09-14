@@ -10,10 +10,13 @@
 </head>
 
 <body>
-
-
-  <div id="lessonContainer">
-    <div id="header">
+  <div id="header">
+    <div id="weekSelectContsiner">
+      <div id="weekSelect">
+        第一周
+      </div>
+    </div>
+    <div class="date">
       <div class="month">
         <p>9月</p>
       </div>
@@ -33,6 +36,8 @@
         <p>五</p>
       </div>
     </div>
+  </div>
+  <div id="lessonContainer">
     <div id="bottomContainer">
       <div id="leftBanner">
       </div>
@@ -41,7 +46,20 @@
     </div>
   </div>
   <script>
-    (() => {
+
+    function renderWeekSelect() {
+      const weekSelect = document.getElementById("weekSelect")
+      // const fragment = document.createDocumentFragment()
+      // for (let i = START_WEEK; i <= FINISH_WEEK; i++) {
+      //   const option = document.createElement("option")
+      //   option.value = i
+      //   option.innerText = i - 2
+      //   fragment.appendChild(option)
+      // }
+      // weekSelect.appendChild(fragment)
+    }
+
+    function renderLeftBanner() {
       const leftBanner = document.getElementById("leftBanner")
       const fragment = document.createDocumentFragment()
       Object.entries(DAY_TIME_ARRAY).map((item) => {
@@ -62,7 +80,9 @@
         fragment.appendChild(div)
       })
       leftBanner.appendChild(fragment)
+    }
 
+    function renderHeaderWeeks() {
       const weeks = document.querySelectorAll(".week")
       const date = new Date();
       const today = {
@@ -78,7 +98,8 @@
         p.innerText = getAfterNDay({ ...today, n: index + 1 - date.getDay() }).day
         week.appendChild(p)
       })
-    })()
+    }
+
     function renderLessonContainer() {
       const rightLesson = document.getElementById("rightLesson")
       const CONTAINER_HEIGHT = rightLesson.clientHeight
@@ -118,10 +139,20 @@
       }, 100)
     }
 
-    renderLessonContainer()
+    function render() {
+      renderHeaderWeeks()
+      renderWeekSelect()
+      renderLeftBanner()
+      renderLessonContainer()
+    }
+
+    function refresh() {
+      renderHeaderWeeks()
+      renderLessonContainer()
+    }
+
+    render()
   </script>
-  <!--  -->
-  <!-- <button id="btn">今日课表</button>
   <script>
 
     let btn = document.getElementById("btn")

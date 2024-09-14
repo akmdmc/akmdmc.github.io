@@ -11,6 +11,7 @@
   /* px */
   --leftBanner-width:50px;
   --leftBox-height:80px;
+  --header-height:80px;
 }
 
 html,body,div{
@@ -35,18 +36,23 @@ p{
   /* height: 90vh; */
   position: relative;
   overflow: auto;
+  margin-top: calc(var(--header-height) / 1.5);
 }
 
 #header{
   position: fixed;
   top: 0;
   left: 0;
-  flex-direction: row;
   width: 100%;
-  height: 60px;
+  height: var(--header-height);
   background-color: var(--header-bg-color);
   box-shadow: 0px 1px 10px 1px rgba(0,0,0,0.2);
   z-index: 1;
+}
+
+#header .date{
+  flex-direction: row;
+  width: 100%;
 }
 
 #header .week{
@@ -68,7 +74,6 @@ p{
 
 #bottomContainer{
   width: 100%;
-  margin-top: 52px;
   /* position: absolute;
   top: 60px;
   left: 0; */

@@ -1,4 +1,9 @@
-// import { lessonList } from "./data";
+const START_YEAR = 2024,
+  START_MONTH = 8,
+  START_DAY = 26; //2024.9.9 星期一 开学
+
+const START_WEEK = 3;
+const FINISH_WEEK = 16;
 
 interface ILesson {
   lessonName: string;
@@ -9,10 +14,6 @@ interface ILesson {
   lessonTeacher: string;
   lessonClassRoom: string; //教室
 }
-
-const START_YEAR = 2024,
-  START_MONTH = 8,
-  START_DAY = 26; //2024.9.9 星期一 开学
 
 let LESSON_LIST: ILesson[] = [
   {
