@@ -83,6 +83,7 @@ export type Fiber = {|
 
   // The value of element.type which is used to preserve the identity during
   // reconciliation of this child.
+  // element.type的值，用于在协调此子级的过程中保留标识。
   elementType: any,
 
   // The resolved function/class/ associated with this fiber.

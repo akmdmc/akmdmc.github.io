@@ -403,9 +403,155 @@ function FiberNode(
 
 #### Element对象
 
-Element对象是对UI的描述
+jsx
+
+_jsxs方法就是用来生成Element对象的, 它执行的结果才是Element对象
+
+***Element对象是对UI的描述***
+
+```js
+const ReactElement = function(type, key, ref, self, source, owner, props) {
+  const element = {
+    // This tag allows us to uniquely identify this as a React Element
+    $$typeof: REACT_ELEMENT_TYPE,// 元素类型
+
+    // Built-in properties that belong on the element
+    type: type,// ElementType (即html标签名)
+    key: key, // for循环中的key，不加默认为index
+    ref: ref,// 组件ref
+    props: props,// 组件props (一些属性和子元素)
+
+    // Record the component responsible for creating this element.
+    _owner: owner,
+  };
+  return element;
+};
+```
+
+
 
 #### fiber对象
 
-fiber对象是对React执行过程中元素状态的描述
+**fiber对象是对React*执行过程中元素状态的描述*（打上一些标记等等）**
+
+![image-20241024103813853](C:\Users\PalmPay\AppData\Roaming\Typora\typora-user-images\image-20241024103813853.png)
+
+Element对象——>fiber对象
+
+第一步生成的就是Element对象，
+
+```js
+function FiberNode(
+  tag: WorkTag,
+  pendingProps: mixed,
+  key: null | string,
+  mode: TypeOfMode,
+) {
+  // Instance
+  this.tag = tag;// 组件对象类型
+  this.key = key;
+  this.elementType = null;
+  this.type = null; // 元素类型 div，span...
+  this.stateNode = null;// 真实node
+
+  // Fiber
+  this.return = null;
+  this.child = null;
+  this.sibling = null;
+  this.index = 0;
+
+  this.ref = null;
+
+  this.pendingProps = pendingProps; // 组件初始props
+  this.memoizedProps = null;// 更新后的props状态
+  this.updateQueue = null;
+  this.memoizedState = null;// 更新后的props状态
+  this.dependencies = null;
+
+  this.mode = mode;
+
+  // Effects 副作用标记
+  this.flags = NoFlags;
+  this.subtreeFlags = NoFlags;
+  this.deletions = null;
+
+  this.lanes = NoLanes;
+  this.childLanes = NoLanes;
+
+  this.alternate = null;// Fiber | null 连体婴儿   双缓存机制  
+}
+```
+
+workTag是对元素类型的进一步抽象
+
+```ts
+export type WorkTag =
+  | 0
+  | 1
+  | 2
+  | 3
+...
+
+export const IndeterminateComponent = 2; // Before we know whether it is function or class
+export const HostRoot = 3; // Root of a host tree. Could be nested inside another node. 根节点
+export const HostPortal = 4; // A subtree. Could be an entry point to a different renderer.
+export const HostComponent = 5; //原生节点 div，span等
+export const HostText = 6; //文本 
+...
+```
+
+### 挂载流程
+
+调用顺序
+
+```js
+ReactDOM.createRoot(root).render(App)
+```
+
+createRoot方法
+
+```typescript
+  // container是 根div id=root
+export function createRoot(
+  container: Element | Document | DocumentFragment,
+  options?: CreateRootOptions,
+): RootType {
+	.............;
+
+  let isStrictMode = false;
+  let concurrentUpdatesByDefaultOverride = false;
+  let identifierPrefix = '';
+  let onRecoverableError = defaultOnRecoverableError;
+  let transitionCallbacks = null;
+    
+   ............;
+
+   // container是 根div id=root
+  const root = createContainer(
+    container,
+    ConcurrentRoot,
+    null,
+    isStrictMode,
+    concurrentUpdatesByDefaultOverride,
+    identifierPrefix,
+    onRecoverableError,
+    transitionCallbacks,
+  );
+  markContainerAsRoot(root.current, container);
+
+  const rootContainerElement: Document | Element | DocumentFragment =
+    container.nodeType === COMMENT_NODE
+      ? (container.parentNode: any)
+      : container;
+  listenToAllSupportedEvents(rootContainerElement);
+
+  return new ReactDOMRoot(root);
+}
+```
+
+createContainer方法
+
+```
+
+```
 
