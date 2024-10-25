@@ -508,7 +508,7 @@ export const HostText = 6; //文本
 ReactDOM.createRoot(root).render(App)
 ```
 
-createRoot方法
+#### createRoot方法
 
 ```typescript
   // container是 根div id=root
@@ -549,9 +549,62 @@ export function createRoot(
 }
 ```
 
-createContainer方法
+#### createContainer方法
 
+```javascript
+//主要步骤
+export function createContainer(
+ containerInfo: Container,
+ tag: RootTag,
+ hydrate: boolean,
+ identifierPrefix: string,
+ onRecoverableError: (error: mixed) => void,
+ isStrictMode: boolean,
+ concurrentUpdatesByDefaultOverride: null | boolean,
+ ...){
+  // container 是dom id=app
+  // 给容器和hostRootFiber之间建立关联关系
+  const root: FiberRoot = (new FiberRootNode(
+    containerInfo,
+    tag,
+    hydrate,
+    identifierPrefix,
+    onRecoverableError,
+  ): any);
+
+  // 凭空创建的，是 dom id=app的子节点
+  const uninitializedFiber = createHostRootFiber(
+    tag,
+    isStrictMode,
+    concurrentUpdatesByDefaultOverride,
+  );
+
+  root.current = uninitializedFiber;
+  uninitializedFiber.stateNode = root;
+
+  initializeUpdateQueue(uninitializedFiber);
+  return root;
+}
 ```
 
+此时内存模型如下
+
+![1](C:\Users\PalmPay\Desktop\akmdmc.github.io\源码学习\react\img\1.png)
+
+#### scheduleUpdateOnFiber ?
+
+```typescript
+export function scheduleUpdateOnFiber(
+  root: FiberRoot,
+  fiber: Fiber,
+  lane: Lane,
+  eventTime: number,
+) {
+  // Mark that the root has a pending update.
+  markRootUpdated(root, lane, eventTime);
+}
 ```
 
+
+
+newFiberNode

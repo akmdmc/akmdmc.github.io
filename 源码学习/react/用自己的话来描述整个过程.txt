@@ -1,0 +1,2 @@
+首先是入口函数createRoot，它通过传入的dom元素，用createContainer得到了FiberRoot，其中还关联了HostRootFiber作为它的子元素。
+随后创建完FiberRoot，通过ReactDOMRoot工厂函数返回ReactDOMRoot，它的prototype添加了render函数，而render函数本质是调用updateContainer。
