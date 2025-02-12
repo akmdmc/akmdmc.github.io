@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #eee;
+      font-size: 14px;
+      font-family: '微软雅黑';
+      line-height: 1.5;
+      color: #333;
+      overflow-x: hidden;
+      overflow-y: scroll;
+      -webkit-overflow-scrolling: touch;
+      -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+      -webkit-text-size-adjust: 100%;
+      -webkit-font-smoothing: antialiased;
+      -webkit-box-sizing: border-box;
+    }
+
+    #container {
+      width: 100%;
+    }
+
+    #linkList {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      padding: 10px;
+      background-color: #eee;
+      border-radius: 10px;
+      margin: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+      overflow: hidden;
+      transition: all 0.5s;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .link {
+      color: black;
+      transition: all 0.5s;
+      padding: 5px 5px;
+    }
+
+    .link:hover {
+      color: #000;
+    }
+
+    .link::before {
+      content: '';
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background: #fff;
+      opacity: 0;
+      transition: all 0.5s;
+    }
+
+    .selected {
+      /* color: rgb(249, 48, 48); */
+      background-color: rgb(143, 185, 240);
+      border-radius: 6px;
+    }
+
+    #showImg {
+      width: 100%;
+    }
+
+    /* loading 动画 */
+    #loading {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 999;
+      font-size: 30px;
+      color: #fff;
+      text-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+      display: block;
+    }
+  </style>
+</head>
+
+<body>
+  <section id="container">
+    <section id="linkList"></section>
+    <img id="showImg" src="" alt="">
+    <div id="loading">loading...</div>
+  </section>
+  <!-- <a id="download" href="" download="hh.png">download</a> -->
+  <script>
+    const linkList = document.getElementById('linkList')
+    const showImg = document.getElementById('showImg')
+    const loading = document.getElementById('loading')
+    const urlArr = []
+
+    let nowSelectedEle = null
+    let imgAvailableNum = 1;
+
+    // 浏览器截取图片 url代码片段
+    // for (let i = 2; i < document.getElementsByTagName('img').length; i++) {
+    //   console.log(i, document.getElementsByTagName('img')[i].src);
+    //   const a = document.createElement('a');
+    //   a.href = document.getElementsByTagName('img')[i].src;
+    //   a.download = i + '-english';
+    //   urlArr.push(document.getElementsByTagName('img')[i].src)
+    // }
+
+    function createALink(url, i = 0) {
+      fetch(url)
+        .then(res => res.blob())
+        .then(blob => {
+          const a = document.createElement("a");
+          a.classList = 'link'
+          linkList.appendChild(a)
+          a.innerText = ` ${imgAvailableNum} `
+          a.addEventListener("click", () => {
+            if (nowSelectedEle) {
+              nowSelectedEle.classList.remove('selected')
+            }
+            a.classList.add('selected')
+            nowSelectedEle = a
+            showImg.style.display = 'none'
+            loading.style.display = 'block'
+            showImg.setAttribute('src', url)
+          })
+        })
+        .finally(() => {
+          imgAvailableNum += 1
+        })
+        .catch(err => {
+          console.log(err);
+        })
+      // a.click()
+      return imgAvailableNum
+    }
+
+    const data = {
+      0: "https://view-cache.book118.com/view4/M04/39/3A/wKh2Cl8UHdqAJ7qgAADW7Yxh9-0179.png",
+
+      1: "https://view-cache.book118.com/view1/M04/3A/2E/view_1_xIY9ESrl4Ea9szMDIAZI5ZgEEeALho76CCJ8C80vtnk=.png?v=20231026",
+
+      2: "https://view-cache.book118.com/view6/M02/3A/05/wKh2BF8UHdqAcFNkAADcax456EY174.png",
+
+      3: "https://img.book118.com/sr1/M00/00/34/wKh2C2JWOQuIcSdHAAA3PuPlphMAA13iAGobrgAADdW807.png",
+
+      4: "https://view-cache.book118.com/view12/M00/1B/3F/wKh2Dl8UHdqADOafAADS0gJIQII759.png",
+
+      5: "https://img.book118.com/sr1/M00/06/33/wKh2AmI0OrSIMIHtAABFLqYlVLEAA1UYgHcsoAAAEVG371.png",
+
+      6: "https://view-cache.book118.com/view12/M00/11/2C/view_1_wbhLOdHyw661FSMtDnuZQcwYA0CkPeFmQ4wz2VKxGfo=.png?v=20231026",
+
+      7: "https://view-cache.book118.com/view4/M04/3A/14/wKh2CV8UHdqABtvdAADUElS96_A842.png",
+
+      8: "https://img.book118.com/sr1/M00/04/06/wKh2AmdsxXuIIIquAAA1zxxe0CEAA3JggHeJJMAADXn362.png",
+
+      9: "https://view-cache.book118.com/view3/M03/1E/22/wKh2BV94kVSADGJSAADZHbHmcXQ918.png",
+
+      10: "https://view-cache.book118.com/view2/M04/38/28/view_1_mBkeunGkyLjwcHXt@uvmY15kv8_k9FW87agqzkto520=.png?v=20231026",
+
+      11: "https://view-cache.book118.com/view3/M00/00/2C/wKh2BF94kVSAY4EPAADmYRv-CD8680.png",
+
+      12: "https://view-cache.book118.com/view11/M00/29/0C/wKh2C194kVSAQVdSAAEGfl0XjWE828.png",
+
+      13: "https://view-cache.book118.com/view1/M05/38/24/view_1_q4ZDAm9F__BQUHWAs8e7SbB7pAxcYXx3kBXPApw1S8s=.png?v=20231026",
+
+      14: "https://view-cache.book118.com/view2/M02/26/2A/wKh2BV94kVSAQXerAADLGqD-K3M222.png",
+
+      15: "https://view-cache.book118.com/view6/M01/3A/05/wKh2BF8UHe-ACgy-AADHApR2Yoc454.png",
+
+      16: "https://view-cache.book118.com/view12/M00/11/2C/view_1_lYwtmJ4_H7JVjvlCCuZ4OjrVHjqteWf8CJLREbbheq8=.png?v=20231026",
+
+      17: "https://img.book118.com/sr1/M00/00/34/wKh2C2JWOQuIcSdHAAA3PuPlphMAA13iAGobrgAADdW807.png",
+
+      18: "https://view-cache.book118.com/view2/M05/0B/08/wKh2BF8UHe-AFkNsAADXvr77Ot8797.png",
+
+      19: "https://view-cache.book118.com/view10/M01/1B/3D/wKh2Dl8UHe-AIjmGAADFtlcI3rM176.png",
+
+      20: "https://img.book118.com/sr1/M00/06/33/wKh2AmI0OrSIMIHtAABFLqYlVLEAA1UYgHcsoAAAEVG371.png",
+
+      21: "https://view-cache.book118.com/view6/M00/39/19/view_1_rsVb34OSjF91XuBSCYIj2VbKEhSFKE1dF46SnqOMOj8=.png?v=20231026",
+
+      22: "https://view-cache.book118.com/view1/M04/3A/2E/wKh2BV8UHe-AfAcuAADGG1qJBuU186.png",
+
+      23: "https://view-cache.book118.com/view16/M02/0E/1A/wKh2D2BCPcqAX7kyAAC0r8rFDAo932.png",
+
+      24: "https://view-cache.book118.com/view17/M00/0D/36/wKh2D2BCPcqAUL1IAAC1UnU99e0869.png",
+
+      25: "https://img.book118.com/sr1/M00/04/06/wKh2AmdsxXuIIIquAAA1zxxe0CEAA3JggHeJJMAADXn362.png",
+
+      26: "https://view-cache.book118.com/view16/M03/0E/1B/wKh2DmBCPcqAX0PsAACu0ZBYFfc737.png",
+
+      27: "https://view-cache.book118.com/view16/M03/0E/1A/view_1_35GcEc1wSvwfBlA6BuUUxi3wIhF50vbQYCGbDXn94DY=.png?v=20231026",
+
+      28: "https://view-cache.book118.com/view17/M01/0D/36/wKh2DmBCPcqAQiQaAAC3Lf-m8v4186.png",
+
+      29: "https://view-cache.book118.com/view16/M00/0E/1A/wKh2D2BCPcuAWe4GAAC-8lA7zpc398.png",
+
+      30: "https://view-cache.book118.com/view2/M02/38/28/wKh2BF94kWeAbaxuAACwlIQOH5k777.png",
+
+      31: "https://view-cache.book118.com/view11/M00/0C/3B/wKh2Dl94kWeAQioUAACuvHqMKFY388.png",
+
+      32: "https://view-cache.book118.com/view2/M00/26/2A/wKh2BV94kWeAB7RXAAC-rMKbDx0635.png",
+
+      33: "https://view-cache.book118.com/view1/M05/38/24/wKh2BF94kWeAO35kAAC_qoKHMzA246.png",
+
+      34: "https://view-cache.book118.com/view11/M00/29/0C/wKh2C194kWeAFLlbAADFOpv2ko0536.png",
+
+      35: "https://view-cache.book118.com/view3/M00/00/2C/wKh2BF94kWeABtqoAADS9Nyd9kE851.png",
+
+      36: "https://img.book118.com/sr1/M00/00/34/wKh2C2JWOQuIcSdHAAA3PuPlphMAA13iAGobrgAADdW807.png",
+
+      37: "https://view-cache.book118.com/view6/M02/27/3B/wKh2BF94kWiAD1vIAAC2wkjtw9c975.png",
+
+      38: "https://view-cache.book118.com/view2/M02/26/2A/wKh2BV94kWiAVPGGAADPhpUotEk055.png",
+
+      39: "https://img.book118.com/sr1/M00/06/33/wKh2AmI0OrSIMIHtAABFLqYlVLEAA1UYgHcsoAAAEVG371.png",
+
+      40: "https://view-cache.book118.com/view1/M02/27/2F/wKh2BV94kWiAPEAiAAC8qzrgVuk512.png",
+
+      41: "https://view-cache.book118.com/view6/M01/27/0F/wKh2Cl94kWiAIjWGAADOoCygHlo338.png",
+
+
+      41: "https://view-cache.book118.com/view6/M01/27/0F/wKh2Cl94kWiAIjWGAADOoCygHlo338.png",
+
+      42: "https://view-cache.book118.com/view6/M03/27/3B/wKh2BF94kWiATCt-AADLGejsQP0282.png",
+
+      43: "https://view-cache.book118.com/view11/M00/29/0C/wKh2C194kWiAQARYAADDfJWt7gQ997.png",
+
+      44: "https://img.book118.com/sr1/M00/04/06/wKh2AmdsxXuIIIquAAA1zxxe0CEAA3JggHeJJMAADXn362.png",
+
+      45: "https://view-cache.book118.com/view2/M03/33/17/wKh2BF9XLJKAamZXAADSYsOd7V8393.png",
+
+      46: "https://view-cache.book118.com/view6/M02/22/36/wKh2BF9XLJGAdaPDAADK02tKJpA838.png",
+
+      47: "https://view-cache.book118.com/view3/M03/3B/2F/wKh2BF9XLJGATmeWAADS3yC0o5k590.png",
+
+      48: "https://view-cache.book118.com/view2/M00/21/19/wKh2BV9XLJKAdRjvAAC-_bK8FJ0030.png",
+
+      49: "https://view-cache.book118.com/view2/M04/21/19/wKh2BV9XLJGALEZJAADPcBhAwwM889.png",
+
+      50: "https://view-cache.book118.com/view2/M05/21/19/wKh2BV9XLJKAbRJfAAC_jKhnODA463.png",
+
+      51: "https://img.book118.com/sr1/M00/03/32/wKh2AmVAvk6IOCHUAAAcNeMyTNcAA0I3QCge5sAABxN682.png",
+
+      53: "https://img.book118.com/sr1/M00/1D/33/wKh2AmZO7lKIGeADAAAPBF0TlXoAALpGADD394AAA8c312.png",
+
+      54: "https://max.book118.com/user_center_v1/static/home/images/lazy/load.png",
+
+      55: "https://img.book118.com/sr1/M00/06/1A/wKh2AmAXcxeIFgmvAAAJ3V1IH_QAACgfwBRXqQAAAn1226.png",
+
+      56: "https://img.book118.com/sr1/M00/0D/2A/wKh2AmTtYyaIT822AABn8wDNr0oAAfAIQDMa_gAAGgL207.jpg",
+    }
+
+
+    function init() {
+
+      // 初始化显示图片
+      showImg.setAttribute("src", data[0])
+
+      // 监听是否加载完毕
+      showImg.addEventListener("load", () => {
+        console.log(showImg.complete, 'load');
+        if (showImg.complete) {
+          showImg.style.display = "block"
+          loading.style.display = "none"
+        }
+        else {
+          showImg.style.display = "none"
+          loading.style.display = "block"
+        }
+      })
+
+
+      // 创建a标签
+      for (const key in data) {
+        createALink(data[key], key)
+      }
+    }
+
+    init()
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <div>content</div>
+  <textarea id="content"></textarea>
+  <hr>
+  <div>result</div>
+  <textarea id="result"></textarea>
+  <script>
+    const content = document.getElementById('content')
+    const result = document.getElementById('result')
+    let contentValueArr = []
+    content.addEventListener("change", (e) => {
+      String(e.target.value).split('\n').forEach(v => {
+        if (getIndex(v) === v.length || getIndex(v) === 0) {
+
+        }
+        else {
+          contentValueArr.push([v.slice(getIndex(v), v.length), v.slice(0, getIndex(v))])
+        }
+      })
+      console.log(contentValueArr);
+      
+      //输出
+      result.innerText = contentValueArr.map(v => {
+        return v[0] + ' ' + v[1]
+      }).join('\n')
+
+
+      //JSON化
+      result.innerText = JSON.stringify(contentValueArr)
+    })
+    console.log(content.innerText);
+
+
+    //是否为字母
+    function isLetter(str) {
+      return str.length === 1 && str.match(/[a-z]/i)
+    }
+
+    //到哪里不是字母
+    function getIndex(str) {
+      for (let i = 0; i < str.length; i++) {
+        if (!isLetter(str[i])) {
+          return i
+        }
+      }
+      return str.length
+    }
+  </script>
+</body>
+
+</html>

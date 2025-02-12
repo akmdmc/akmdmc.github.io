@@ -211,9 +211,9 @@
 <body>
     <section>
         <div id="top_navabar">
-            <a class="topBox" href="./choose.html"><span>电脑</span></a>
-            <a class="topBox" href="./sj.html"><span>手机</span></a>
-            <a class="topBox" href="./准星代码编辑器/index.html"><span>准星代码编辑器</span></a>
+            <!-- <a class="topBox" href="./choose.html"><span>电脑</span></a> -->
+            <!-- <a class="topBox" href="./sj.html"><span>手机</span></a> -->
+            <!-- <a class="topBox" href="./准星代码编辑器/index.html"><span>准星代码编辑器</span></a> -->
             <!-- <a class="topBox" href="./todo/dist/index.html"><span>记事本</span></a> -->
             <!-- <a class="topBox" href="./电脑/期末复习刷题/doTheProblem.html"><span>中医期末练习</span></a> -->
             <!-- <a class="topBox" href="./电脑/clock/clock.html"><span>clock</span></a> -->
@@ -274,6 +274,10 @@
         }
         if (e.key === 't' || e.keyCode === 84 && toolFlag) {
             location.href = './小工具/字段json生成器/index.html'
+        }
+
+        if (e.key === 'l' && toolFlag) {
+            location.href = './小工具/浏览器注入代码/index.html'
         }
     })
 
